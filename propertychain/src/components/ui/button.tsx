@@ -266,52 +266,55 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={handleClick}
         {...props}
       >
-        {/* Ripple effects container */}
-        <span className="absolute inset-0 overflow-hidden rounded-inherit">
-          {ripples.map(ripple => (
-            <span
-              key={ripple.id}
-              className="absolute animate-ripple"
-              style={{
-                left: ripple.x,
-                top: ripple.y,
-                transform: 'translate(-50%, -50%)',
-              }}
-            >
-              <span className="block h-2 w-2 rounded-full bg-current opacity-50 animate-ping" />
-            </span>
-          ))}
-        </span>
-        
-        {/* Button content */}
-        <span className="relative flex items-center justify-center gap-2">
-          {loading ? (
-            <>
-              <span className="spinner-container absolute inset-0 flex items-center justify-center">
-                <Spinner size={spinnerSize} className="text-current" />
+        {/* Single container for all children to fix Slot component */}
+        <span className="relative inline-flex items-center justify-center w-full h-full">
+          {/* Ripple effects container */}
+          <span className="absolute inset-0 overflow-hidden rounded-inherit">
+            {ripples.map(ripple => (
+              <span
+                key={ripple.id}
+                className="absolute animate-ripple"
+                style={{
+                  left: ripple.x,
+                  top: ripple.y,
+                  transform: 'translate(-50%, -50%)',
+                }}
+              >
+                <span className="block h-2 w-2 rounded-full bg-current opacity-50 animate-ping" />
               </span>
-              {/* Maintain layout during loading */}
-              <span className="invisible flex items-center gap-2">
+            ))}
+          </span>
+          
+          {/* Button content */}
+          <span className="relative flex items-center justify-center gap-2">
+            {loading ? (
+              <>
+                <span className="spinner-container absolute inset-0 flex items-center justify-center">
+                  <Spinner size={spinnerSize} className="text-current" />
+                </span>
+                {/* Maintain layout during loading */}
+                <span className="invisible flex items-center gap-2">
+                  {leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>}
+                  {!isIconButton && (loadingText || children)}
+                  {rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
+                </span>
+              </>
+            ) : (
+              <>
                 {leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>}
-                {!isIconButton && (loadingText || children)}
+                {!isIconButton && children}
                 {rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
-              </span>
-            </>
-          ) : (
-            <>
-              {leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>}
-              {!isIconButton && children}
-              {rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
-            </>
+              </>
+            )}
+          </span>
+          
+          {/* Error message for accessibility */}
+          {errorMessage && (
+            <span id="button-error" className="sr-only">
+              {errorMessage}
+            </span>
           )}
         </span>
-        
-        {/* Error message for accessibility */}
-        {errorMessage && (
-          <span id="button-error" className="sr-only">
-            {errorMessage}
-          </span>
-        )}
       </Comp>
     )
     

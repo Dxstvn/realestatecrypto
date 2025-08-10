@@ -8,14 +8,11 @@
 
 import * as React from 'react'
 import {
-  Notification,
-  NotificationType,
-  NotificationPriority,
   NotificationBell,
   NotificationCenter,
   NotificationSettings,
-  NotificationStats,
 } from './notifications'
+import { type Notification } from '@/contexts/notification-context'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -113,22 +110,22 @@ import {
 export const PROPERTY_NOTIFICATION_TEMPLATES = {
   // Property Listings
   'property-listed': {
-    type: 'property' as NotificationType,
-    priority: 'medium' as NotificationPriority,
+    type: 'PROPERTY' as any,
+    priority: 'medium' as const,
     title: 'New Property Listed',
     messageTemplate: 'Property {{propertyAddress}} has been listed for {{price}}',
     icon: <Home className="h-4 w-4" />,
   },
   'property-updated': {
-    type: 'property' as NotificationType,
-    priority: 'low' as NotificationPriority,
+    type: 'PROPERTY' as any,
+    priority: 'low' as const,
     title: 'Property Updated',
     messageTemplate: 'Property {{propertyAddress}} details have been updated',
     icon: <FileText className="h-4 w-4" />,
   },
   'price-changed': {
-    type: 'property' as NotificationType,
-    priority: 'high' as NotificationPriority,
+    type: 'PROPERTY' as any,
+    priority: 'high' as const,
     title: 'Price Change',
     messageTemplate: 'Price for {{propertyAddress}} changed from {{oldPrice}} to {{newPrice}}',
     icon: <DollarSign className="h-4 w-4" />,
@@ -136,22 +133,22 @@ export const PROPERTY_NOTIFICATION_TEMPLATES = {
 
   // Property Viewings
   'viewing-scheduled': {
-    type: 'property' as NotificationType,
-    priority: 'medium' as NotificationPriority,
+    type: 'PROPERTY' as any,
+    priority: 'medium' as const,
     title: 'Viewing Scheduled',
     messageTemplate: 'Property viewing scheduled for {{date}} at {{time}}',
     icon: <Eye className="h-4 w-4" />,
   },
   'viewing-reminder': {
-    type: 'reminder' as NotificationType,
-    priority: 'high' as NotificationPriority,
+    type: 'reminder' as any,
+    priority: 'high' as const,
     title: 'Viewing Reminder',
     messageTemplate: 'Your property viewing is in {{timeUntil}} at {{address}}',
     icon: <Clock className="h-4 w-4" />,
   },
   'viewing-cancelled': {
-    type: 'property' as NotificationType,
-    priority: 'medium' as NotificationPriority,
+    type: 'PROPERTY' as any,
+    priority: 'medium' as const,
     title: 'Viewing Cancelled',
     messageTemplate: 'Property viewing for {{date}} has been cancelled',
     icon: <AlertTriangle className="h-4 w-4" />,
@@ -159,29 +156,29 @@ export const PROPERTY_NOTIFICATION_TEMPLATES = {
 
   // Investment Notifications
   'investment-opportunity': {
-    type: 'investment' as NotificationType,
-    priority: 'high' as NotificationPriority,
+    type: 'investment' as any,
+    priority: 'high' as const,
     title: 'New Investment Opportunity',
     messageTemplate: 'New investment opportunity: {{propertyType}} with {{expectedReturn}}% returns',
     icon: <TrendingUp className="h-4 w-4" />,
   },
   'funding-milestone': {
-    type: 'investment' as NotificationType,
-    priority: 'medium' as NotificationPriority,
+    type: 'investment' as any,
+    priority: 'medium' as const,
     title: 'Funding Milestone',
     messageTemplate: 'Investment {{investmentName}} reached {{percentage}}% funding',
     icon: <Target className="h-4 w-4" />,
   },
   'investment-complete': {
-    type: 'investment' as NotificationType,
-    priority: 'high' as NotificationPriority,
+    type: 'investment' as any,
+    priority: 'high' as const,
     title: 'Investment Funded',
     messageTemplate: 'Investment {{investmentName}} is now fully funded!',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   'dividend-payment': {
-    type: 'payment' as NotificationType,
-    priority: 'medium' as NotificationPriority,
+    type: 'payment' as any,
+    priority: 'medium' as const,
     title: 'Dividend Payment',
     messageTemplate: 'You received {{amount}} dividend from {{investmentName}}',
     icon: <Banknote className="h-4 w-4" />,
@@ -189,29 +186,29 @@ export const PROPERTY_NOTIFICATION_TEMPLATES = {
 
   // Transaction Notifications
   'offer-received': {
-    type: 'transaction' as NotificationType,
-    priority: 'high' as NotificationPriority,
+    type: 'transaction' as any,
+    priority: 'high' as const,
     title: 'Offer Received',
     messageTemplate: 'New offer of {{amount}} received for {{propertyAddress}}',
     icon: <FileSignature className="h-4 w-4" />,
   },
   'offer-accepted': {
-    type: 'transaction' as NotificationType,
-    priority: 'high' as NotificationPriority,
+    type: 'transaction' as any,
+    priority: 'high' as const,
     title: 'Offer Accepted',
     messageTemplate: 'Your offer for {{propertyAddress}} has been accepted!',
     icon: <CheckCircle className="h-4 w-4" />,
   },
   'inspection-scheduled': {
-    type: 'transaction' as NotificationType,
-    priority: 'medium' as NotificationPriority,
+    type: 'transaction' as any,
+    priority: 'medium' as const,
     title: 'Inspection Scheduled',
     messageTemplate: 'Property inspection scheduled for {{date}}',
     icon: <ClipboardCheck className="h-4 w-4" />,
   },
   'closing-reminder': {
-    type: 'reminder' as NotificationType,
-    priority: 'urgent' as NotificationPriority,
+    type: 'reminder' as any,
+    priority: 'urgent' as const,
     title: 'Closing Reminder',
     messageTemplate: 'Property closing is in {{daysUntil}} days',
     icon: <Key className="h-4 w-4" />,
@@ -219,22 +216,22 @@ export const PROPERTY_NOTIFICATION_TEMPLATES = {
 
   // Payment Notifications
   'payment-due': {
-    type: 'payment' as NotificationType,
-    priority: 'high' as NotificationPriority,
+    type: 'payment' as any,
+    priority: 'high' as const,
     title: 'Payment Due',
     messageTemplate: 'Payment of {{amount}} is due in {{daysUntil}} days',
     icon: <Receipt className="h-4 w-4" />,
   },
   'payment-overdue': {
-    type: 'payment' as NotificationType,
-    priority: 'urgent' as NotificationPriority,
+    type: 'payment' as any,
+    priority: 'urgent' as const,
     title: 'Payment Overdue',
     messageTemplate: 'Payment of {{amount}} is {{daysOverdue}} days overdue',
     icon: <AlertTriangle className="h-4 w-4" />,
   },
   'payment-received': {
-    type: 'payment' as NotificationType,
-    priority: 'medium' as NotificationPriority,
+    type: 'payment' as any,
+    priority: 'medium' as const,
     title: 'Payment Received',
     messageTemplate: 'Payment of {{amount}} has been received',
     icon: <CheckCircle className="h-4 w-4" />,
@@ -242,15 +239,15 @@ export const PROPERTY_NOTIFICATION_TEMPLATES = {
 
   // Market Updates
   'market-report': {
-    type: 'system' as NotificationType,
-    priority: 'low' as NotificationPriority,
+    type: 'system' as any,
+    priority: 'low' as const,
     title: 'Market Report',
     messageTemplate: 'New market report available for {{area}}',
     icon: <BarChart className="h-4 w-4" />,
   },
   'price-alert': {
-    type: 'property' as NotificationType,
-    priority: 'medium' as NotificationPriority,
+    type: 'PROPERTY' as any,
+    priority: 'medium' as const,
     title: 'Price Alert',
     messageTemplate: 'Properties in {{area}} matching your criteria are now {{trendDirection}}',
     icon: <TrendingUp className="h-4 w-4" />,
@@ -258,15 +255,15 @@ export const PROPERTY_NOTIFICATION_TEMPLATES = {
 
   // Security & Account
   'security-alert': {
-    type: 'security' as NotificationType,
-    priority: 'urgent' as NotificationPriority,
+    type: 'security' as any,
+    priority: 'urgent' as const,
     title: 'Security Alert',
     messageTemplate: 'Unusual login attempt detected from {{location}}',
     icon: <Shield className="h-4 w-4" />,
   },
   'profile-updated': {
-    type: 'system' as NotificationType,
-    priority: 'low' as NotificationPriority,
+    type: 'system' as any,
+    priority: 'low' as const,
     title: 'Profile Updated',
     messageTemplate: 'Your profile information has been updated',
     icon: <UserCheck className="h-4 w-4" />,
@@ -290,21 +287,11 @@ export class PropertyNotificationBuilder {
       type: template.type,
       priority: template.priority,
       title: template.title,
-      message,
+      description: message,
       timestamp: new Date(),
       read: false,
-      archived: false,
-      pinned: false,
-      metadata: data,
-      relatedEntity: data.propertyId ? {
-        type: 'property',
-        id: data.propertyId,
-        name: data.propertyAddress || data.propertyName || 'Property'
-      } : data.investmentId ? {
-        type: 'investment',
-        id: data.investmentId,
-        name: data.investmentName || 'Investment'
-      } : undefined,
+      actionUrl: data.propertyId ? `/properties/${data.propertyId}` : 
+                 data.investmentId ? `/investments/${data.investmentId}` : undefined,
     }
   }
 }
@@ -578,10 +565,10 @@ export function InvestmentNotificationDashboard({
                     </div>
                   </div>
                   <Badge variant={
-                    investment.status === 'active' ? 'success' :
+                    investment.status === 'active' ? 'outline' :
                     investment.status === 'funding' ? 'default' :
                     'secondary'
-                  }>
+                  } className={investment.status === 'active' ? 'text-green-600 border-green-200 bg-green-50' : ''}>
                     {investment.status}
                   </Badge>
                 </div>
@@ -677,10 +664,10 @@ export function TransactionNotificationTimeline({
                     </p>
                   </div>
                   <Badge variant={
-                    transaction.status === 'completed' ? 'success' :
+                    transaction.status === 'completed' ? 'outline' :
                     transaction.status === 'active' ? 'default' :
                     'secondary'
-                  }>
+                  } className={transaction.status === 'completed' ? 'text-green-600 border-green-200 bg-green-50' : ''}>
                     {transaction.status}
                   </Badge>
                 </div>
@@ -812,8 +799,7 @@ export function RealTimeNotificationFeed({
                   className="flex gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
                 >
                   <div className="flex-shrink-0 mt-0.5">
-                    {PROPERTY_NOTIFICATION_TEMPLATES[notification.metadata?.templateKey]?.icon || 
-                     <Bell className="h-4 w-4" />}
+                    <Bell className="h-4 w-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
@@ -828,7 +814,7 @@ export function RealTimeNotificationFeed({
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground truncate">
-                      {notification.message}
+                      {notification.description}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {format(notification.timestamp, 'h:mm:ss a')}

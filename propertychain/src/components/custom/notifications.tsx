@@ -98,43 +98,43 @@ import { toast } from 'sonner'
  * Notification type configuration with icons and colors
  */
 const NOTIFICATION_CONFIG = {
-  [NOTIFICATION_TYPES.SYSTEM]: {
+  system: {
     icon: Settings,
     color: 'text-gray-600',
     bgColor: 'bg-gray-100',
     label: 'System',
   },
-  [NOTIFICATION_TYPES.INVESTMENT]: {
+  investment: {
     icon: DollarSign,
     color: 'text-green-600',
     bgColor: 'bg-green-100',
     label: 'Investment',
   },
-  [NOTIFICATION_TYPES.PROPERTY]: {
+  property: {
     icon: Building,
     color: 'text-blue-600',
     bgColor: 'bg-blue-100',
     label: 'Property',
   },
-  [NOTIFICATION_TYPES.DOCUMENT]: {
+  document: {
     icon: FileText,
     color: 'text-purple-600',
     bgColor: 'bg-purple-100',
     label: 'Document',
   },
-  [NOTIFICATION_TYPES.PAYMENT]: {
+  payment: {
     icon: AlertTriangle,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-100',
     label: 'Payment',
   },
-  [NOTIFICATION_TYPES.KYC]: {
+  kyc: {
     icon: Shield,
     color: 'text-orange-600',
     bgColor: 'bg-orange-100',
     label: 'KYC',
   },
-  [NOTIFICATION_TYPES.GENERAL]: {
+  general: {
     icon: Info,
     color: 'text-blue-600',
     bgColor: 'bg-blue-100',
@@ -200,7 +200,7 @@ function NotificationItem({
   onRemove: (id: string) => void
   compact?: boolean
 }) {
-  const config = NOTIFICATION_CONFIG[notification.type]
+  const config = NOTIFICATION_CONFIG[notification.type.toLowerCase() as keyof typeof NOTIFICATION_CONFIG]
   const Icon = config.icon
   const priorityConfig = PRIORITY_CONFIG[notification.priority || 'medium']
 

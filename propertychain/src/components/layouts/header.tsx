@@ -1,9 +1,9 @@
 /**
- * Navigation Header - PropertyChain
+ * Navigation Header - PropertyLend
  * 
- * Main navigation header with exact Section 2.1 specifications
+ * DeFi lending platform header with Web3 glassmorphism design
  * Desktop: 72px height, mobile: 60px height with Sheet drawer
- * Following Section 0 principles with proper z-index and animations
+ * Following PropertyLend UI spec with gradient effects and network indicators
  */
 
 'use client'
@@ -45,6 +45,11 @@ import {
   LogOut,
   Home,
   Building2,
+  TrendingUp,
+  Wallet,
+  DollarSign,
+  Users,
+  Circle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
@@ -60,43 +65,58 @@ interface NavItem {
 
 const navigation: NavItem[] = [
   {
-    title: 'Properties',
+    title: 'Earn',
     items: [
       {
-        title: 'Browse All',
-        href: ROUTES.PROPERTIES,
-        description: 'Explore our curated selection of tokenized real estate'
+        title: 'Senior Tranches',
+        href: '/earn/senior',
+        description: 'Stable 8% APY with priority payment protection'
       },
       {
-        title: 'Featured Deals',
-        href: ROUTES.EXPLORE,
-        description: 'Hand-picked investment opportunities with high returns'
+        title: 'Junior Tranches',
+        href: '/earn/junior',
+        description: 'Higher yields 20-30% APY with enhanced returns'
       },
       {
-        title: 'Compare Properties',
-        href: ROUTES.COMPARE,
-        description: 'Side-by-side comparison of investment options'
+        title: 'Pool Overview',
+        href: '/earn/pools',
+        description: 'Explore all available lending pools and performance'
       }
     ]
   },
   {
-    title: 'Learn',
+    title: 'Positions',
     items: [
       {
-        title: 'How It Works',
-        href: ROUTES.HOW_IT_WORKS,
-        description: 'Understanding real estate tokenization process'
+        title: 'My Investments',
+        href: '/positions',
+        description: 'Track your lending positions and earned yields'
       },
       {
-        title: 'About PropertyChain',
-        href: ROUTES.ABOUT,
-        description: 'Our mission to democratize real estate investing'
+        title: 'Transaction History',
+        href: '/positions/history',
+        description: 'Complete record of deposits, withdrawals, and earnings'
       }
     ]
   },
   {
-    title: 'Support',
-    href: ROUTES.CONTACT,
+    title: 'Loans',
+    items: [
+      {
+        title: 'Active Loans',
+        href: '/loans',
+        description: 'Monitor funded real estate loans and their performance'
+      },
+      {
+        title: 'Apply for Loan',
+        href: '/loans/apply',
+        description: 'Submit your real estate for bridge lending consideration'
+      }
+    ]
+  },
+  {
+    title: 'DAO',
+    href: '/dao',
   },
 ]
 
@@ -108,6 +128,9 @@ export function Header({ className }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [notificationCount] = useState(3) // Mock notification count
   const [isAuthenticated] = useState(false) // Mock auth state - integrate with real auth later
+  const [currentAPY] = useState(12.4) // Mock current APY - integrate with real data later
+  const [currentNetwork] = useState('Polygon') // Mock network - integrate with Web3 provider later
+  const [isNetworkConnected] = useState(true) // Mock network status
   const pathname = usePathname()
   // const { theme, setTheme } = useTheme() // Reserved for future theme toggle feature
 
@@ -132,11 +155,11 @@ export function Header({ className }: HeaderProps) {
   return (
     <header 
       className={cn(
-        // Desktop: 72px height, Mobile: 60px height
-        'fixed top-0 w-full z-[1000] bg-background border-b border-border',
+        // Desktop: 72px height, Mobile: 60px height with glassmorphism
+        'fixed top-0 w-full z-[1000] glass border-b border-border',
         'h-[60px] lg:h-[72px]',
-        // Shadow from Section 2.1
-        'shadow-[0_2px_4px_-1px_rgba(0,0,0,0.06)]',
+        // Web3 styling with backdrop blur
+        'backdrop-blur-md bg-background/80',
         className
       )}
     >
@@ -145,26 +168,26 @@ export function Header({ className }: HeaderProps) {
           {/* Logo Section (Left) */}
           <Link 
             href={ROUTES.HOME}
-            className="flex items-center gap-3 group transition-all duration-200 hover:shadow-md rounded-lg p-1"
+            className="flex items-center gap-3 group transition-all duration-200 hover:glow-primary rounded-lg p-1"
           >
-            {/* Logo Icon - 40px × 40px with gradient background */}
-            <div className="relative w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow duration-200">
-              <Building2 className="w-6 h-6 text-primary-foreground" />
+            {/* Logo Icon - 40px × 40px with DeFi gradient background */}
+            <div className="relative w-10 h-10 gradient-primary rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200 group-hover:scale-105">
+              <TrendingUp className="w-6 h-6 text-primary-foreground" />
             </div>
             
             {/* Logo Text */}
             <div className="flex flex-col">
               <span className="text-lg font-bold text-foreground leading-none">
-                PropertyChain
+                PropertyLend
               </span>
               <span className="text-xs text-muted-foreground leading-none mt-0.5 hidden sm:block">
-                Tokenized Real Estate
+                DeFi Bridge Lending
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation (Center) - Hidden on mobile */}
-          <div className="hidden lg:flex items-center">
+          <div className="hidden lg:flex items-center gap-6">
             <NavigationMenu>
               <NavigationMenuList className="gap-2">
                 {navigation.map((item) => (
@@ -225,6 +248,25 @@ export function Header({ className }: HeaderProps) {
                 ))}
               </NavigationMenuList>
             </NavigationMenu>
+            
+            {/* APY Ticker - DeFi Element */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-success/10 border border-success/20">
+              <DollarSign className="w-4 h-4 text-success" />
+              <span className="text-sm font-medium text-success">
+                APY: {currentAPY}% 🔥
+              </span>
+            </div>
+            
+            {/* Network Indicator - Web3 Element */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+              <Circle className={cn(
+                "w-2 h-2 rounded-full",
+                isNetworkConnected ? "bg-success animate-pulse" : "bg-destructive"
+              )} />
+              <span className="text-sm font-medium text-primary">
+                {currentNetwork}
+              </span>
+            </div>
           </div>
 
           {/* Right Section */}
@@ -291,18 +333,17 @@ export function Header({ className }: HeaderProps) {
                 </DropdownMenu>
               </>
             ) : (
-              // Not authenticated - show auth buttons
+              // Not authenticated - show Web3 wallet connect
               <>
-                <Link href={ROUTES.LOGIN}>
+                <Link href="/docs">
                   <Button variant="ghost" className="hidden sm:inline-flex">
-                    Sign In
+                    Docs
                   </Button>
                 </Link>
-                <Link href={ROUTES.REGISTER}>
-                  <Button>
-                    Get Started
-                  </Button>
-                </Link>
+                <Button className="gradient-primary animate-shimmer-web3 font-semibold">
+                  <Wallet className="mr-2 h-4 w-4" />
+                  Connect Wallet
+                </Button>
               </>
             )}
 

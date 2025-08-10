@@ -655,11 +655,12 @@ export function createMockWizardSteps(): Omit<WizardStep, 'isCompleted' | 'isVal
       description: 'Enter your personal details',
       icon: <User className="h-5 w-5" />,
       isRequired: true,
-      component: ({ data, onDataChange, onValidationChange }) => (
+      component: ({ data, onDataChange, onValidationChange, isActive }) => (
         <BasicInfoStep 
           data={data} 
           onDataChange={onDataChange} 
           onValidationChange={onValidationChange}
+          isActive={isActive}
         />
       ),
     },
@@ -669,11 +670,12 @@ export function createMockWizardSteps(): Omit<WizardStep, 'isCompleted' | 'isVal
       description: 'Provide your address information',
       icon: <MapPin className="h-5 w-5" />,
       isRequired: true,
-      component: ({ data, onDataChange, onValidationChange }) => (
+      component: ({ data, onDataChange, onValidationChange, isActive }) => (
         <AddressStep 
           data={data} 
           onDataChange={onDataChange} 
           onValidationChange={onValidationChange}
+          isActive={isActive}
         />
       ),
     },
@@ -683,11 +685,12 @@ export function createMockWizardSteps(): Omit<WizardStep, 'isCompleted' | 'isVal
       description: 'Configure your settings',
       icon: <Settings className="h-5 w-5" />,
       isRequired: false,
-      component: ({ data, onDataChange, onValidationChange }) => (
+      component: ({ data, onDataChange, onValidationChange, isActive }) => (
         <PreferencesStep 
           data={data} 
           onDataChange={onDataChange} 
           onValidationChange={onValidationChange}
+          isActive={isActive}
         />
       ),
     },
@@ -697,11 +700,12 @@ export function createMockWizardSteps(): Omit<WizardStep, 'isCompleted' | 'isVal
       description: 'Review and confirm your information',
       icon: <CheckCircle className="h-5 w-5" />,
       isRequired: true,
-      component: ({ data, onDataChange, onValidationChange }) => (
+      component: ({ data, onDataChange, onValidationChange, isActive }) => (
         <ReviewStep 
           data={data} 
           onDataChange={onDataChange} 
           onValidationChange={onValidationChange}
+          isActive={isActive}
         />
       ),
     },
@@ -736,7 +740,7 @@ function BasicInfoStep({ data, onDataChange, onValidationChange }: WizardStepPro
           />
           {form.formState.errors.name && (
             <p className="text-sm text-destructive mt-1">
-              {form.formState.errors.name.message}
+              {String(form.formState.errors.name.message || '')}
             </p>
           )}
         </div>
@@ -750,7 +754,7 @@ function BasicInfoStep({ data, onDataChange, onValidationChange }: WizardStepPro
           />
           {form.formState.errors.email && (
             <p className="text-sm text-destructive mt-1">
-              {form.formState.errors.email.message}
+              {String(form.formState.errors.email.message || '')}
             </p>
           )}
         </div>
@@ -794,7 +798,7 @@ function AddressStep({ data, onDataChange, onValidationChange }: WizardStepProps
           />
           {form.formState.errors.street && (
             <p className="text-sm text-destructive mt-1">
-              {form.formState.errors.street.message}
+              {String(form.formState.errors.street.message || '')}
             </p>
           )}
         </div>
@@ -808,7 +812,7 @@ function AddressStep({ data, onDataChange, onValidationChange }: WizardStepProps
             />
             {form.formState.errors.city && (
               <p className="text-sm text-destructive mt-1">
-                {form.formState.errors.city.message}
+                {String(form.formState.errors.city.message || '')}
               </p>
             )}
           </div>
@@ -821,7 +825,7 @@ function AddressStep({ data, onDataChange, onValidationChange }: WizardStepProps
             />
             {form.formState.errors.state && (
               <p className="text-sm text-destructive mt-1">
-                {form.formState.errors.state.message}
+                {String(form.formState.errors.state.message || '')}
               </p>
             )}
           </div>
@@ -834,7 +838,7 @@ function AddressStep({ data, onDataChange, onValidationChange }: WizardStepProps
             />
             {form.formState.errors.zipCode && (
               <p className="text-sm text-destructive mt-1">
-                {form.formState.errors.zipCode.message}
+                {String(form.formState.errors.zipCode.message || '')}
               </p>
             )}
           </div>

@@ -113,7 +113,7 @@ export function isValidApiResponse(response: unknown): response is ApiResponse {
   return (
     typeof response === 'object' &&
     response !== null &&
-    typeof response.success === 'boolean'
+    typeof (response as any).success === 'boolean'
   )
 }
 

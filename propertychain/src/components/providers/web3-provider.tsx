@@ -67,7 +67,7 @@ export function Web3Provider({ children }: Web3ProviderProps) {
       // Request account access
       const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts',
-      })
+      }) as string[]
 
       if (!accounts || accounts.length === 0) {
         throw new Error('No accounts found. Please make sure your wallet is unlocked.')
@@ -76,13 +76,13 @@ export function Web3Provider({ children }: Web3ProviderProps) {
       // Get network info
       const chainId = await window.ethereum.request({
         method: 'eth_chainId',
-      })
+      }) as string
 
       // Get balance
       const balance = await window.ethereum.request({
         method: 'eth_getBalance',
         params: [accounts[0], 'latest'],
-      })
+      }) as string
 
       setState({
         connected: true,
@@ -142,7 +142,7 @@ export function Web3Provider({ children }: Web3ProviderProps) {
       // If network doesn't exist, try to add it
       if (error && typeof error === 'object' && 'code' in error && error.code === 4902) {
         const networkConfig = getNetworkConfig(chainId)
-        if (networkConfig) {
+        if (networkConfig && window.ethereum) {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [networkConfig],
@@ -169,21 +169,23 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     window.ethereum.removeListener('disconnect', handleDisconnect)
   }
 
-  const handleAccountsChanged = (accounts: string[]): void => {
-    if (accounts.length === 0) {
+  const handleAccountsChanged = (accounts: unknown): void => {
+    const accountsArray = accounts as string[]
+    if (accountsArray.length === 0) {
       disconnect()
     } else {
       setState(prev => ({
         ...prev,
-        address: accounts[0],
+        address: accountsArray[0],
       }))
     }
   }
 
-  const handleChainChanged = (chainId: string): void => {
+  const handleChainChanged = (chainId: unknown): void => {
+    const chainIdString = chainId as string
     setState(prev => ({
       ...prev,
-      chainId: parseInt(chainId, 16),
+      chainId: parseInt(chainIdString, 16),
     }))
     
     // Reload page to reset application state

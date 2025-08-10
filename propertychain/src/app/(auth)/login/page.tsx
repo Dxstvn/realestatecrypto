@@ -20,7 +20,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Icons } from '@/components/ui/icons'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
@@ -51,7 +50,7 @@ const loginSchema = z.object({
     .string()
     .min(1, 'Password is required')
     .min(8, 'Password must be at least 8 characters'),
-  rememberMe: z.boolean().default(false),
+  rememberMe: z.boolean(),
 })
 
 type LoginFormData = z.infer<typeof loginSchema>

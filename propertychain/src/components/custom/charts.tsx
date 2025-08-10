@@ -179,7 +179,7 @@ export function ChartContainer({
 }
 
 // Custom tooltip with PropertyChain styling
-export function CustomTooltip({ active, payload, label }: TooltipProps<any, any>) {
+export function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload || !payload.length) return null
 
   return (

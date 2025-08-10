@@ -65,11 +65,17 @@ export function ShimmerSkeleton({
  */
 export function PulsingSkeleton({
   className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+  style,
+  children,
+}: {
+  className?: string
+  style?: React.CSSProperties
+  children?: React.ReactNode
+}) {
   return (
     <motion.div
       className={cn('rounded-md bg-muted', className)}
+      style={style}
       animate={{
         opacity: [0.5, 1, 0.5],
       }}
@@ -78,8 +84,9 @@ export function PulsingSkeleton({
         repeat: Infinity,
         ease: 'easeInOut',
       }}
-      {...props}
-    />
+    >
+      {children}
+    </motion.div>
   )
 }
 
@@ -763,36 +770,7 @@ export function useProgressLoading(steps: string[], stepDuration = 1000) {
 
 // Export all loading components and utilities
 export {
-  // Basic loaders
+  // Basic loaders (Skeleton is from ui components)
   Skeleton,
-  Spinner,
-  WaveLoader,
-  DotsLoader,
-  
-  // Enhanced components
-  AnimatedProgress,
-  LoadingButton,
-  LoadingWrapper,
-  PageLoader,
-  
-  // Specific skeletons
-  PropertyCardSkeleton,
-  KPICardSkeleton,
-  ChartSkeleton,
-  TableSkeleton,
-  FormSkeleton,
-  InvestmentSkeleton,
-  FileUploadSkeleton,
-  SearchSkeleton,
-  
-  // Suspense boundaries
-  SuspenseBoundary,
-  DashboardSuspense,
-  PropertyListSuspense,
-  FormSuspense,
-  TableSuspense,
-  
-  // Hooks
-  useLoadingState,
-  useProgressLoading,
+  // Note: All other components are already exported with 'export function'
 }

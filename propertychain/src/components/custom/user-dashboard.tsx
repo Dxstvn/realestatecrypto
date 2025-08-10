@@ -477,12 +477,15 @@ function InvestmentCard({ investment, onClick }: InvestmentCardProps) {
               {investment.location} • {investment.propertyType}
             </p>
           </div>
-          <Badge variant={
-            investment.status === 'active' ? 'default' :
-            investment.status === 'completed' ? 'success' :
-            investment.status === 'funded' ? 'secondary' :
-            'outline'
-          }>
+          <Badge 
+            variant={
+              investment.status === 'active' ? 'default' :
+              investment.status === 'completed' ? 'outline' :
+              investment.status === 'funded' ? 'secondary' :
+              'outline'
+            }
+            className={investment.status === 'completed' ? 'text-green-600 border-green-200 bg-green-50' : ''}
+          >
             {investment.status}
           </Badge>
         </div>

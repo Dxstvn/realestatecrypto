@@ -152,7 +152,6 @@ function showToast(
       label: action.label,
       onClick: action.onClick,
     } : undefined,
-    important,
     duration: important ? Infinity : (restOptions.duration || 4000),
   })
 }

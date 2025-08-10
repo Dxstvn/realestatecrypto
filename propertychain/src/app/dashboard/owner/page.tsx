@@ -123,6 +123,7 @@ import {
   Search,
   Mail,
   Phone,
+  TrendingDown,
 } from 'lucide-react'
 import { formatCurrency, formatNumber, formatPercentage } from '@/lib/format'
 import { cn } from '@/lib/utils'

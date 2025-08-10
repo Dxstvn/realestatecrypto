@@ -60,10 +60,13 @@ import {
   Eye,
   Download,
   Share,
-  Print,
+  Printer,
 } from 'lucide-react'
-import { formatCurrency, formatDate, formatNumber, formatSquareFeet } from '@/lib/format'
+import { formatCurrency, formatDate, formatNumber } from '@/lib/format'
 import { addDays, subDays, subMonths } from 'date-fns'
+
+// Format square feet with thousands separator
+const formatSquareFeet = (sqft: number) => `${formatNumber(sqft)} sq ft`
 
 // Property-specific print types
 export interface PropertyListingPrintData {

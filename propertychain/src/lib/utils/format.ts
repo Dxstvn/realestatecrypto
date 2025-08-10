@@ -56,3 +56,59 @@ export function formatTokenAmount(
   const formatted = (num / divisor).toFixed(displayDecimals)
   return parseFloat(formatted).toString() // Remove trailing zeros
 }
+
+export function formatDate(
+  date: Date | string | number,
+  options?: Intl.DateTimeFormatOptions
+): string {
+  const dateObj = date instanceof Date ? date : new Date(date)
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    ...options,
+  }).format(dateObj)
+}
+
+export function formatTimeAgo(date: Date | string | number): string {
+  const dateObj = date instanceof Date ? date : new Date(date)
+  const now = new Date()
+  const seconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000)
+  
+  const intervals = [
+    { label: 'year', seconds: 31536000 },
+    { label: 'month', seconds: 2592000 },
+    { label: 'week', seconds: 604800 },
+    { label: 'day', seconds: 86400 },
+    { label: 'hour', seconds: 3600 },
+    { label: 'minute', seconds: 60 },
+    { label: 'second', seconds: 1 },
+  ]
+  
+  for (const interval of intervals) {
+    const count = Math.floor(seconds / interval.seconds)
+    if (count >= 1) {
+      return count === 1 
+        ? `${count} ${interval.label} ago`
+        : `${count} ${interval.label}s ago`
+    }
+  }
+  
+  return 'just now'
+}
+
+/**
+ * Format a date/time as time only
+ */
+export function formatTime(
+  date: Date | string | number,
+  options?: Intl.DateTimeFormatOptions
+): string {
+  const dateObj = new Date(date)
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+    ...options
+  }
+  return new Intl.DateTimeFormat('en-US', defaultOptions).format(dateObj)
+}

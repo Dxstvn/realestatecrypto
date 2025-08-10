@@ -499,7 +499,7 @@ function PropertyBasicInfoStep({ data, onDataChange, onValidationChange }: Wizar
           />
           {form.formState.errors.title && (
             <p className="text-sm text-destructive mt-1">
-              {form.formState.errors.title.message}
+              {String(form.formState.errors.title?.message || '')}
             </p>
           )}
         </div>
@@ -514,7 +514,7 @@ function PropertyBasicInfoStep({ data, onDataChange, onValidationChange }: Wizar
           />
           {form.formState.errors.description && (
             <p className="text-sm text-destructive mt-1">
-              {form.formState.errors.description.message}
+              {String(form.formState.errors.description?.message || '')}
             </p>
           )}
         </div>
@@ -578,7 +578,7 @@ function PropertyBasicInfoStep({ data, onDataChange, onValidationChange }: Wizar
           </div>
           {form.formState.errors.price && (
             <p className="text-sm text-destructive mt-1">
-              {form.formState.errors.price.message}
+              {String(form.formState.errors.price?.message || '')}
             </p>
           )}
         </div>
@@ -623,7 +623,7 @@ function PropertyLocationStep({ data, onDataChange, onValidationChange }: Wizard
           />
           {form.formState.errors.street && (
             <p className="text-sm text-destructive mt-1">
-              {form.formState.errors.street.message}
+              {String(form.formState.errors.street?.message || '')}
             </p>
           )}
         </div>
@@ -638,7 +638,7 @@ function PropertyLocationStep({ data, onDataChange, onValidationChange }: Wizard
             />
             {form.formState.errors.city && (
               <p className="text-sm text-destructive mt-1">
-                {form.formState.errors.city.message}
+                {String(form.formState.errors.city?.message || '')}
               </p>
             )}
           </div>
@@ -652,7 +652,7 @@ function PropertyLocationStep({ data, onDataChange, onValidationChange }: Wizard
             />
             {form.formState.errors.state && (
               <p className="text-sm text-destructive mt-1">
-                {form.formState.errors.state.message}
+                {String(form.formState.errors.state?.message || '')}
               </p>
             )}
           </div>
@@ -668,7 +668,7 @@ function PropertyLocationStep({ data, onDataChange, onValidationChange }: Wizard
             />
             {form.formState.errors.zipCode && (
               <p className="text-sm text-destructive mt-1">
-                {form.formState.errors.zipCode.message}
+                {String(form.formState.errors.zipCode?.message || '')}
               </p>
             )}
           </div>
@@ -737,7 +737,7 @@ function PropertyDetailsStep({ data, onDataChange, onValidationChange }: WizardS
             />
             {form.formState.errors.squareFeet && (
               <p className="text-sm text-destructive mt-1">
-                {form.formState.errors.squareFeet.message}
+                {String(form.formState.errors.squareFeet?.message || '')}
               </p>
             )}
           </div>
@@ -864,7 +864,7 @@ function PropertyFeaturesStep({ data, onDataChange, onValidationChange }: Wizard
     setSelectedFeatures(prev => ({
       ...prev,
       [category]: prev[category].includes(feature)
-        ? prev[category].filter(f => f !== feature)
+        ? prev[category].filter((f: string) => f !== feature)
         : [...prev[category], feature]
     }))
   }
@@ -1025,7 +1025,7 @@ function PropertyFinancialStep({ data, onDataChange, onValidationChange }: Wizar
             </div>
             {form.formState.errors.price && (
               <p className="text-sm text-destructive mt-1">
-                {form.formState.errors.price.message}
+                {String(form.formState.errors.price?.message || '')}
               </p>
             )}
           </div>
@@ -1157,7 +1157,7 @@ function PropertyLegalStep({ data, onDataChange, onValidationChange }: WizardSte
           />
           {form.formState.errors.zoning && (
             <p className="text-sm text-destructive mt-1">
-              {form.formState.errors.zoning.message}
+              {String(form.formState.errors.zoning?.message || '')}
             </p>
           )}
         </div>

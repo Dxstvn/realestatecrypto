@@ -45,11 +45,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   ChatInterface,
-  generateMockConversations,
-  generateMockUsers,
+  createMockChatData,
   type ChatUser,
   type ChatMessage,
-  type ChatConversation,
+  type ChatThread as ChatConversation,
 } from './chat-interface'
 import {
   Home,
@@ -168,15 +167,21 @@ export function PropertyChatManager({
   }>({})
   const [showCreateDialog, setShowCreateDialog] = React.useState(false)
 
-  // Mock data
+  // Mock data - get from createMockChatData
+  const mockData = createMockChatData()
+  
   const mockRooms: PropertyChatRoom[] = [
     {
       id: 'room-1',
       name: '123 Main St - Transaction Chat',
-      description: 'Discussion about property purchase',
-      participants: generateMockUsers(5).map((user, index) => ({
-        ...user,
+      type: 'transaction' as const,
+      participants: Array.from({ length: 5 }, (_, index) => ({
+        id: `user-${index}`,
+        name: ['John Smith', 'Jane Doe', 'Bob Agent', 'Lisa Lawyer', 'Mike Lender'][index],
+        email: `user${index}@example.com`,
         role: ['buyer', 'seller', 'agent', 'lawyer', 'lender'][index] as any,
+        status: 'online' as const,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=user${index}`,
         permissions: ['read', 'write'],
         joinedAt: subDays(new Date(), index),
         company: index === 2 ? 'PropertyChain Realty' : undefined,
@@ -192,18 +197,19 @@ export function PropertyChatManager({
       priority: 'high',
       tags: ['urgent', 'closing-soon'],
       allowedActions: ['view_property', 'upload_docs', 'schedule_showing'],
-      isPrivate: true,
-      hasUnread: true,
       unreadCount: 3,
-      lastActivity: subMinutes(new Date(), 15),
     },
     {
       id: 'room-2',
       name: '456 Oak Ave - Property Inquiry',
-      description: 'Initial property discussion',
-      participants: generateMockUsers(3).map((user, index) => ({
-        ...user,
+      type: 'property' as const,
+      participants: Array.from({ length: 3 }, (_, index) => ({
+        id: `user2-${index}`,
+        name: ['Alice Buyer', 'Charlie Agent', 'David Seller'][index],
+        email: `user2${index}@example.com`,
         role: ['buyer', 'agent', 'seller'][index] as any,
+        status: 'online' as const,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=user2${index}`,
         permissions: ['read', 'write'],
         joinedAt: subDays(new Date(), index + 1),
         company: index === 1 ? 'PropertyChain Realty' : undefined,
@@ -217,18 +223,19 @@ export function PropertyChatManager({
       priority: 'medium',
       tags: ['new-inquiry'],
       allowedActions: ['view_property', 'schedule_showing', 'make_offer'],
-      isPrivate: false,
-      hasUnread: false,
       unreadCount: 0,
-      lastActivity: subHours(new Date(), 2),
     },
     {
       id: 'room-3',
       name: 'PropertyChain Team',
-      description: 'Internal team discussions',
-      participants: generateMockUsers(8).map((user, index) => ({
-        ...user,
+      type: 'group' as const,
+      participants: Array.from({ length: 8 }, (_, index) => ({
+        id: `team-${index}`,
+        name: `Team Member ${index + 1}`,
+        email: `team${index}@propertychain.com`,
         role: ['agent', 'admin', 'agent', 'agent', 'admin', 'agent', 'agent', 'admin'][index] as any,
+        status: 'online' as const,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=team${index}`,
         permissions: index < 2 ? ['read', 'write', 'invite', 'manage'] : ['read', 'write'],
         joinedAt: subDays(new Date(), index + 10),
         company: 'PropertyChain Realty',
@@ -240,18 +247,19 @@ export function PropertyChatManager({
       priority: 'low',
       tags: ['internal', 'team'],
       allowedActions: [],
-      isPrivate: true,
-      hasUnread: true,
       unreadCount: 1,
-      lastActivity: subMinutes(new Date(), 45),
     },
     {
       id: 'room-4',
       name: 'Support & Help',
-      description: 'Get help with PropertyChain platform',
-      participants: generateMockUsers(2).map((user, index) => ({
-        ...user,
+      type: 'support' as const,
+      participants: Array.from({ length: 2 }, (_, index) => ({
+        id: `support-${index}`,
+        name: ['Support Agent', 'Support Manager'][index],
+        email: `support${index}@propertychain.com`,
         role: ['admin', 'admin'][index] as any,
+        status: 'online' as const,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=support${index}`,
         permissions: ['read', 'write', 'manage'],
         joinedAt: subDays(new Date(), 1),
         company: 'PropertyChain Support',
@@ -263,10 +271,7 @@ export function PropertyChatManager({
       priority: 'medium',
       tags: ['support', 'help'],
       allowedActions: ['request_info'],
-      isPrivate: false,
-      hasUnread: false,
       unreadCount: 0,
-      lastActivity: subDays(new Date(), 1),
     },
   ]
 
@@ -287,8 +292,7 @@ export function PropertyChatManager({
     }
     if (filter.search) {
       filtered = filtered.filter(room => 
-        room.name.toLowerCase().includes(filter.search!.toLowerCase()) ||
-        (room.description && room.description.toLowerCase().includes(filter.search!.toLowerCase())) ||
+        (room.name && room.name.toLowerCase().includes(filter.search!.toLowerCase())) ||
         (room.propertyAddress && room.propertyAddress.toLowerCase().includes(filter.search!.toLowerCase()))
       )
     }
@@ -303,7 +307,7 @@ export function PropertyChatManager({
         return bPriority - aPriority
       }
       
-      return b.lastActivity.getTime() - a.lastActivity.getTime()
+      return b.updatedAt.getTime() - a.updatedAt.getTime()
     })
 
     return filtered
@@ -419,7 +423,7 @@ export function PropertyChatManager({
                   <div className="flex items-start gap-2 flex-1 min-w-0">
                     {getRoomIcon(room.roomType)}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-sm line-clamp-1">{room.name}</h3>
+                      <h3 className="font-medium text-sm line-clamp-1">{room.name || 'Unnamed Room'}</h3>
                       {room.propertyAddress && (
                         <p className="text-xs text-muted-foreground line-clamp-1">
                           {room.propertyAddress}
@@ -428,7 +432,7 @@ export function PropertyChatManager({
                     </div>
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
-                    {room.hasUnread && room.unreadCount > 0 && (
+                    {room.unreadCount > 0 && (
                       <Badge variant="destructive" className="text-xs px-1.5 py-0.5 min-w-[18px] h-5">
                         {room.unreadCount > 99 ? '99+' : room.unreadCount}
                       </Badge>
@@ -444,7 +448,7 @@ export function PropertyChatManager({
                     <Users className="h-3 w-3" />
                     <span>{room.participants.length}</span>
                   </div>
-                  <span>{formatDate(room.lastActivity, 'relative')}</span>
+                  <span>{formatDate(room.updatedAt)}</span>
                 </div>
 
                 {room.tags && room.tags.length > 0 && (
@@ -528,12 +532,10 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
       sender: {
         id: 'user-agent',
         name: 'Sarah Agent',
+        email: 'sarah@propertychain.com',
         avatar: '/avatars/sarah.jpg',
         status: 'online',
-        role: 'agent',
-        permissions: ['read', 'write', 'manage'],
-        joinedAt: new Date(),
-        company: 'PropertyChain Realty',
+        role: 'agent' as any,
       },
       timestamp: subDays(new Date(), 5),
       actionType: 'info',
@@ -546,11 +548,10 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
       sender: {
         id: 'user-buyer',
         name: 'John Buyer',
+        email: 'john@example.com',
         avatar: '/avatars/john.jpg',
         status: 'online',
-        role: 'buyer',
-        permissions: ['read', 'write'],
-        joinedAt: new Date(),
+        role: 'buyer' as any,
       },
       timestamp: subDays(new Date(), 4),
     },
@@ -561,12 +562,10 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
       sender: {
         id: 'user-agent',
         name: 'Sarah Agent',
+        email: 'sarah@propertychain.com',
         avatar: '/avatars/sarah.jpg',
         status: 'online',
-        role: 'agent',
-        permissions: ['read', 'write', 'manage'],
-        joinedAt: new Date(),
-        company: 'PropertyChain Realty',
+        role: 'agent' as any,
       },
       timestamp: subDays(new Date(), 4),
       relatedEntity: {
@@ -585,11 +584,10 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
       sender: {
         id: 'user-buyer',
         name: 'John Buyer',
+        email: 'john@example.com',
         avatar: '/avatars/john.jpg',
         status: 'online',
-        role: 'buyer',
-        permissions: ['read', 'write'],
-        joinedAt: new Date(),
+        role: 'buyer' as any,
       },
       timestamp: subDays(new Date(), 4),
     },
@@ -600,12 +598,10 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
       sender: {
         id: 'user-agent',
         name: 'Sarah Agent',
+        email: 'sarah@propertychain.com',
         avatar: '/avatars/sarah.jpg',
         status: 'online',
-        role: 'agent',
-        permissions: ['read', 'write', 'manage'],
-        joinedAt: new Date(),
-        company: 'PropertyChain Realty',
+        role: 'agent' as any,
       },
       timestamp: subDays(new Date(), 3),
       relatedEntity: {
@@ -623,12 +619,10 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
       sender: {
         id: 'user-inspector',
         name: 'Mike Inspector',
+        email: 'mike@proinspect.com',
         avatar: '/avatars/mike.jpg',
         status: 'offline',
-        role: 'inspector',
-        permissions: ['read', 'write'],
-        joinedAt: new Date(),
-        company: 'ProInspect Services',
+        role: 'inspector' as any,
       },
       timestamp: subDays(new Date(), 1),
       relatedEntity: {
@@ -646,11 +640,10 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
       sender: {
         id: 'system',
         name: 'PropertyChain System',
+        email: 'system@propertychain.com',
         avatar: '/avatars/system.jpg',
         status: 'online',
-        role: 'admin',
-        permissions: ['read', 'write'],
-        joinedAt: new Date(),
+        role: 'admin' as any,
       },
       timestamp: subMinutes(new Date(), 30),
       actionType: 'reminder',
@@ -668,7 +661,7 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
           <div className="flex items-center gap-3">
             {getRoomIcon(room.roomType)}
             <div>
-              <h2 className="text-lg font-semibold">{room.name}</h2>
+              <h2 className="text-lg font-semibold">{room.name || 'Unnamed Room'}</h2>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 {room.propertyAddress && (
                   <>
@@ -765,7 +758,7 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
       {/* Chat Messages */}
       <div className="flex-1 overflow-hidden">
         <ChatInterface
-          conversations={[{ 
+          threads={[{ 
             ...room, 
             messages: mockMessages.map(msg => ({
               ...msg,
@@ -773,13 +766,12 @@ function PropertyChatInterface({ room, currentUser, onInviteUser }: PropertyChat
             })) 
           }]}
           currentUser={currentUser as ChatUser}
-          selectedConversationId={room.id}
-          onSendMessage={(message) => console.log('Send message:', message)}
+          activeThreadId={room.id}
+          onSendMessage={(threadId, content) => console.log('Send message:', threadId, content)}
           onEditMessage={(messageId, content) => console.log('Edit message:', messageId, content)}
           onDeleteMessage={(messageId) => console.log('Delete message:', messageId)}
-          onReactToMessage={(messageId, emoji) => console.log('React to message:', messageId, emoji)}
+          onReaction={(messageId, emoji) => console.log('React to message:', messageId, emoji)}
           className="h-full"
-          hideConversationList
         />
       </div>
     </div>
@@ -805,7 +797,6 @@ function CreateRoomDialog({
   const [formData, setFormData] = React.useState<Partial<PropertyChatRoom>>({
     roomType: 'property',
     priority: 'medium',
-    isPrivate: false,
     propertyId,
     transactionId,
   })
@@ -816,7 +807,6 @@ function CreateRoomDialog({
     setFormData({
       roomType: 'property',
       priority: 'medium',
-      isPrivate: false,
       propertyId,
       transactionId,
     })
@@ -843,16 +833,6 @@ function CreateRoomDialog({
             />
           </div>
 
-          <div>
-            <Label htmlFor="description">Description (optional)</Label>
-            <Textarea
-              id="description"
-              placeholder="Describe the purpose of this room"
-              value={formData.description || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              rows={2}
-            />
-          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -910,14 +890,6 @@ function CreateRoomDialog({
             </div>
           )}
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="private"
-              checked={formData.isPrivate || false}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPrivate: checked }))}
-            />
-            <Label htmlFor="private">Make this room private</Label>
-          </div>
         </div>
 
         <div className="flex justify-end space-x-2">

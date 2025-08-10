@@ -237,6 +237,26 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
+ * Format time only
+ */
+export function formatTime(
+  date: Date | string | number,
+  options?: Intl.DateTimeFormatOptions
+): string {
+  const dateObj = typeof date === 'string' || typeof date === 'number' 
+    ? new Date(date) 
+    : date
+    
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+    ...options
+  }
+  
+  return new Intl.DateTimeFormat('en-US', defaultOptions).format(dateObj)
+}
+
+/**
  * Pluralize word based on count
  */
 export function pluralize(

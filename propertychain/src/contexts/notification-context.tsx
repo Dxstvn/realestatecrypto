@@ -62,7 +62,7 @@ export function NotificationProvider({
   // Load notifications from storage on mount
   React.useEffect(() => {
     if (persistToStorage && typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS || 'notifications')
+      const stored = localStorage.getItem('notifications')
       if (stored) {
         try {
           const parsed = JSON.parse(stored)
@@ -81,7 +81,7 @@ export function NotificationProvider({
   React.useEffect(() => {
     if (persistToStorage && typeof window !== 'undefined') {
       localStorage.setItem(
-        STORAGE_KEYS.NOTIFICATIONS || 'notifications',
+        'notifications',
         JSON.stringify(notifications)
       )
     }

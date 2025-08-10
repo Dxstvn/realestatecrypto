@@ -61,7 +61,7 @@ import {
   Settings,
   Calendar as CalendarIcon,
   Download,
-  Refresh,
+  RefreshCw,
   Eye,
   EyeOff,
   MoreHorizontal,

@@ -113,6 +113,7 @@ import {
   Linkedin,
   Instagram,
   Youtube,
+  Activity,
 } from 'lucide-react'
 import {
   format,
@@ -216,9 +217,9 @@ const getUserInitials = (firstName?: string, lastName?: string, displayName?: st
 // Get verification level
 const getVerificationLevel = (verification: UserProfile['verification']) => {
   const levels = Object.values(verification).filter(Boolean).length
-  if (levels === 4) return { level: 'Fully Verified', color: 'text-green-500', badge: 'success' as const }
-  if (levels >= 2) return { level: 'Partially Verified', color: 'text-amber-500', badge: 'default' as const }
-  return { level: 'Unverified', color: 'text-red-500', badge: 'destructive' as const }
+  if (levels === 4) return { level: 'Fully Verified', color: 'text-green-500', badge: 'outline' as const, badgeClass: 'text-green-600 border-green-200 bg-green-50' }
+  if (levels >= 2) return { level: 'Partially Verified', color: 'text-amber-500', badge: 'default' as const, badgeClass: '' }
+  return { level: 'Unverified', color: 'text-red-500', badge: 'destructive' as const, badgeClass: '' }
 }
 
 // Profile Card Component
@@ -325,7 +326,7 @@ export function ProfileCard({
                     {user.verification.identity && (
                       <UserCheck className="h-5 w-5 text-blue-500" />
                     )}
-                    <Badge variant={verificationInfo.badge}>
+                    <Badge variant={verificationInfo.badge} className={verificationInfo.badgeClass}>
                       {verificationInfo.level}
                     </Badge>
                   </div>
@@ -444,7 +445,7 @@ export function ProfileCard({
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">@{user.username}</p>
-                <Badge variant={verificationInfo.badge} className="mt-1">
+                <Badge variant={verificationInfo.badge} className={cn("mt-1", verificationInfo.badgeClass)}>
                   {verificationInfo.level}
                 </Badge>
               </div>
@@ -940,7 +941,7 @@ export function ProfileSettingsPanel({
                       </div>
                     </div>
                     {user.verification.email ? (
-                      <Badge variant="success">Verified</Badge>
+                      <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">Verified</Badge>
                     ) : (
                       <Button variant="outline" size="sm">Verify</Button>
                     )}
@@ -955,7 +956,7 @@ export function ProfileSettingsPanel({
                       </div>
                     </div>
                     {user.verification.phone ? (
-                      <Badge variant="success">Verified</Badge>
+                      <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">Verified</Badge>
                     ) : (
                       <Button variant="outline" size="sm">Verify</Button>
                     )}
@@ -970,7 +971,7 @@ export function ProfileSettingsPanel({
                       </div>
                     </div>
                     {user.verification.identity ? (
-                      <Badge variant="success">Verified</Badge>
+                      <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">Verified</Badge>
                     ) : (
                       <Button variant="outline" size="sm">Verify</Button>
                     )}
@@ -985,7 +986,7 @@ export function ProfileSettingsPanel({
                       </div>
                     </div>
                     {user.verification.accredited ? (
-                      <Badge variant="success">Verified</Badge>
+                      <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">Verified</Badge>
                     ) : (
                       <Button variant="outline" size="sm">Verify</Button>
                     )}

@@ -603,7 +603,6 @@ export function MapLayerControl({
                     <Switch
                       checked={layer.visible}
                       onCheckedChange={(checked) => onLayerToggle?.(layer.id, checked)}
-                      size="sm"
                     />
                     <Button
                       variant="ghost"

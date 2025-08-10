@@ -1,0 +1,100 @@
+# Dependabot Configuration - PropertyChain
+# 
+# Automated dependency updates
+# Following UpdatedUIPlan.md Step 60 specifications and CLAUDE.md principles
+
+version: 2
+updates:
+  # NPM dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "propertychain/developers"
+    assignees:
+      - "dependabot"
+    labels:
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    ignore:
+      # Ignore major version updates for critical packages
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Group related dependencies
+      react:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      next:
+        patterns:
+          - "next"
+          - "@next/*"
+      testing:
+        patterns:
+          - "*test*"
+          - "vitest*"
+          - "@testing-library/*"
+          - "playwright*"
+      web3:
+        patterns:
+          - "ethers"
+          - "wagmi"
+          - "viem"
+          - "@rainbow-me/*"
+          - "@web3modal/*"
+      ui:
+        patterns:
+          - "@radix-ui/*"
+          - "tailwind*"
+          - "framer-motion"
+      dev-tools:
+        patterns:
+          - "eslint*"
+          - "prettier*"
+          - "@types/*"
+          - "typescript"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+    reviewers:
+      - "propertychain/devops"
+    labels:
+      - "ci/cd"
+      - "automated"
+    commit-message:
+      prefix: "ci"
+
+  # Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+    reviewers:
+      - "propertychain/devops"
+    labels:
+      - "docker"
+      - "automated"
+    commit-message:
+      prefix: "docker"

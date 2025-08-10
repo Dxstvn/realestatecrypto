@@ -3,7 +3,10 @@
  * Web3 and smart contract interaction types
  */
 
-import { BigNumber } from 'ethers'
+import { BigNumberish } from 'ethers'
+
+// For compatibility, create a type alias
+export type BigNumber = BigNumberish
 
 export interface SmartContract {
   address: string

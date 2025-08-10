@@ -54,7 +54,7 @@ export const Display = React.forwardRef<HTMLDivElement, DisplayProps>(
   ({ className, size, weight, as: Component = "div", gradient = false, children, ...props }, ref) => {
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(
           displayVariants({ size, weight }),
           gradient && "gradient-text",
@@ -80,7 +80,7 @@ export const H1 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
   ({ className, as: Component = "h1", truncate, balance = true, ...props }, ref) => {
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(
           "text-h1", // 36px/44px/-0.03em/700
           "text-neutral-900 dark:text-neutral-100",
@@ -101,7 +101,7 @@ export const H2 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
   ({ className, as: Component = "h2", truncate, balance = true, ...props }, ref) => {
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(
           "text-h2", // 30px/38px/-0.02em/700
           "text-neutral-900 dark:text-neutral-100",
@@ -122,7 +122,7 @@ export const H3 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
   ({ className, as: Component = "h3", truncate, balance = true, ...props }, ref) => {
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(
           "text-h3", // 24px/32px/-0.02em/600
           "text-neutral-900 dark:text-neutral-100",
@@ -143,7 +143,7 @@ export const H4 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
   ({ className, as: Component = "h4", truncate, balance = true, ...props }, ref) => {
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(
           "text-h4", // 20px/30px/-0.01em/600
           "text-neutral-900 dark:text-neutral-100",
@@ -164,7 +164,7 @@ export const H5 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
   ({ className, as: Component = "h5", truncate, balance = true, ...props }, ref) => {
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(
           "text-h5", // 18px/28px/0/600
           "text-neutral-900 dark:text-neutral-100",
@@ -185,7 +185,7 @@ export const H6 = React.forwardRef<HTMLHeadingElement, HeadingProps>(
   ({ className, as: Component = "h6", truncate, balance = true, ...props }, ref) => {
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(
           "text-h6", // 16px/24px/0/600
           "text-neutral-900 dark:text-neutral-100",
@@ -239,7 +239,7 @@ const textVariants = cva(
 )
 
 export interface TextProps
-  extends React.HTMLAttributes<HTMLParagraphElement>,
+  extends Omit<React.HTMLAttributes<HTMLParagraphElement>, 'color'>,
     VariantProps<typeof textVariants> {
   as?: "p" | "span" | "div" | "label"
   truncate?: boolean | number
@@ -259,7 +259,7 @@ export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(
   }, ref) => {
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(
           textVariants({ size, color, weight }),
           balance && "text-balance",
@@ -268,7 +268,7 @@ export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(
           Component === "p" && "mb-2", // 16px margin for paragraphs
           className
         )}
-        {...props}
+        {...(props as any)}
       />
     )
   }
@@ -354,7 +354,7 @@ export const FinancialValue = React.forwardRef<HTMLSpanElement, FinancialValuePr
 
     return (
       <span
-        ref={ref}
+        ref={ref as any}
         className={cn(
           financialVariants({ size, trend: determinedTrend, align }),
           animate && "transition-all duration-300 ease-out",
@@ -393,7 +393,7 @@ export const Code = React.forwardRef<HTMLElement, CodeProps>(
     const Component = inline ? "code" : "pre"
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         className={cn(
           "font-mono text-sm",
           inline && [
@@ -422,7 +422,7 @@ Code.displayName = "Code"
 export const Strong = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
   ({ className, ...props }, ref) => (
     <strong
-      ref={ref}
+      ref={ref as any}
       className={cn("font-semibold", className)}
       {...props}
     />
@@ -433,7 +433,7 @@ Strong.displayName = "Strong"
 export const Em = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
   ({ className, ...props }, ref) => (
     <em
-      ref={ref}
+      ref={ref as any}
       className={cn("italic", className)}
       {...props}
     />
@@ -444,7 +444,7 @@ Em.displayName = "Em"
 export const Small = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
   ({ className, ...props }, ref) => (
     <small
-      ref={ref}
+      ref={ref as any}
       className={cn("text-sm text-neutral-600 dark:text-neutral-400", className)}
       {...props}
     />

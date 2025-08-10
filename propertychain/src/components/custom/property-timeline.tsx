@@ -338,10 +338,11 @@ export function TransactionTimeline({
   // Convert stages to progress timeline format
   const progressStages = Object.keys(TRANSACTION_STAGES).map(key => {
     const stage = stages.find(s => s.stage === key)
+    const status = stage?.status === 'failed' ? 'pending' : (stage?.status || 'pending')
     return {
       id: key,
       name: TRANSACTION_STAGES[key as keyof typeof TRANSACTION_STAGES].label,
-      status: stage?.status || 'pending' as 'completed' | 'active' | 'pending',
+      status: status as 'completed' | 'active' | 'pending',
       progress: stage?.status === 'completed' ? 100 : stage?.status === 'active' ? 50 : 0,
     }
   })
@@ -441,11 +442,11 @@ export function TransactionTimeline({
                     )}
                   </div>
                   <Badge variant={
-                    stage.status === 'completed' ? 'success' :
+                    stage.status === 'completed' ? 'outline' :
                     stage.status === 'active' ? 'default' :
                     stage.status === 'failed' ? 'destructive' :
                     'secondary'
-                  }>
+                  } className={stage.status === 'completed' ? 'text-green-600 border-green-200 bg-green-50' : ''}>
                     {stage.status}
                   </Badge>
                 </div>
@@ -739,10 +740,10 @@ export function RenovationTimeline({
                     </p>
                   </div>
                   <Badge variant={
-                    renovation.status === 'completed' ? 'success' :
+                    renovation.status === 'completed' ? 'outline' :
                     renovation.status === 'in-progress' ? 'default' :
                     'secondary'
-                  }>
+                  } className={renovation.status === 'completed' ? 'text-green-600 border-green-200 bg-green-50' : ''}>
                     {renovation.status}
                   </Badge>
                 </div>

@@ -36,7 +36,7 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu'
 import {
-  Print,
+  Printer,
   Download,
   Eye,
   FileText,
@@ -46,7 +46,6 @@ import {
   Mail,
   Copy,
   Save,
-  Printer,
   FileDown,
   PaperclipIcon,
   Layout,
@@ -65,7 +64,6 @@ import {
   Type,
   Palette,
   Ruler,
-  PageBreak,
   Layers,
   Home,
   Building,
@@ -309,7 +307,7 @@ export function PrintPreview({
   const previewRef = React.useRef<HTMLDivElement>(null)
 
   const handlePrint = useReactToPrint({
-    content: () => previewRef.current,
+    contentRef: previewRef,
     documentTitle: title,
     onAfterPrint: onPrint,
   })
@@ -359,7 +357,7 @@ export function PrintPreview({
             </div>
             <div className="flex items-center gap-2">
               <Button onClick={handlePrint}>
-                <Print className="mr-2 h-4 w-4" />
+                <Printer className="mr-2 h-4 w-4" />
                 Print
               </Button>
               <Button variant="outline" onClick={handleDownloadPDF}>
@@ -643,7 +641,7 @@ export function PrintManager({
         <div className="flex items-center gap-2">
           {selectedDocuments.length > 0 && (
             <Button onClick={() => onPrint?.(selectedDocuments)}>
-              <Print className="mr-2 h-4 w-4" />
+              <Printer className="mr-2 h-4 w-4" />
               Print Selected ({selectedDocuments.length})
             </Button>
           )}
@@ -809,7 +807,7 @@ export function PrintManager({
                       Preview
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => onPrint?.([doc.id])}>
-                      <Print className="mr-2 h-4 w-4" />
+                      <Printer className="mr-2 h-4 w-4" />
                       Print
                     </DropdownMenuItem>
                     <DropdownMenuItem>
@@ -872,8 +870,13 @@ export function PrintButton({
 }: PrintButtonProps) {
   const [showPreviewDialog, setShowPreviewDialog] = React.useState(false)
 
+  const printRef = React.useRef<HTMLElement | null>(null)
+  React.useEffect(() => {
+    printRef.current = document.getElementById('printable-content')
+  }, [])
+  
   const handlePrint = useReactToPrint({
-    content: () => document.getElementById('printable-content'),
+    contentRef: printRef,
     documentTitle: title,
     onAfterPrint: onPrint,
   })
@@ -892,7 +895,7 @@ export function PrintButton({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant={variant} size={size} className={className}>
-            <Print className="mr-2 h-4 w-4" />
+            <Printer className="mr-2 h-4 w-4" />
             Print
           </Button>
         </DropdownMenuTrigger>
@@ -931,7 +934,7 @@ export function PrintButton({
         <PrintPreview
           content={content}
           title={title}
-          options={options}
+          options={options as PrintOptions | undefined}
           onPrint={() => {
             setShowPreviewDialog(false)
             onPrint?.()

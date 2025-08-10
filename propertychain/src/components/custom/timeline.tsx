@@ -338,11 +338,11 @@ export function Timeline({
                             {event.title}
                             {event.status && (
                               <Badge variant={
-                                event.status === 'completed' ? 'success' :
+                                event.status === 'completed' ? 'outline' :
                                 event.status === 'active' ? 'default' :
                                 event.status === 'failed' ? 'destructive' :
                                 'secondary'
-                              }>
+                              } className={event.status === 'completed' ? 'text-green-600 border-green-200 bg-green-50' : ''}>
                                 {event.status}
                               </Badge>
                             )}
@@ -512,7 +512,7 @@ export function MilestoneTracker({
   const getStatusBadge = (status: TimelineMilestone['status']) => {
     switch (status) {
       case 'completed':
-        return <Badge variant="success">Completed</Badge>
+        return <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">Completed</Badge>
       case 'in-progress':
         return <Badge>In Progress</Badge>
       case 'upcoming':

@@ -569,7 +569,7 @@ export function WalletConnect({
         const balanceInWei = typeof balance === 'string' 
           ? parseInt(balance, 16) 
           : balance
-        const balanceInEth = balanceInWei / Math.pow(10, 18)
+        const balanceInEth = Number(balanceInWei) / Math.pow(10, 18)
         setParsedBalance(balanceInEth)
       } catch (error) {
         setParsedBalance(0)

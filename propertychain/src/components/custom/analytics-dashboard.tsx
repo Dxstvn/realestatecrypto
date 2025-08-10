@@ -49,7 +49,7 @@ import {
   Activity,
   Eye,
   Download,
-  Refresh,
+  RefreshCw,
   Settings,
   Filter,
   Calendar,
@@ -59,7 +59,7 @@ import {
   MoreVertical,
   Plus,
   X,
-  DragHandleDots2,
+  GripVertical,
   Home,
   DollarSign,
   Users,
@@ -221,7 +221,7 @@ export function AnalyticsDashboard({
             </SelectContent>
           </Select>
           <Button variant="outline" size="icon" onClick={handleRefreshAll}>
-            <Refresh className="h-4 w-4" />
+            <RefreshCw className="h-4 w-4" />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -347,7 +347,7 @@ function DashboardWidget({
           <div className="flex items-center gap-1">
             {editMode && (
               <Button variant="ghost" size="icon" className="h-6 w-6">
-                <DragHandleDots2 className="h-3 w-3" />
+                <GripVertical className="h-3 w-3" />
               </Button>
             )}
             <Button 
@@ -369,7 +369,7 @@ function DashboardWidget({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={handleRefresh} disabled={isLoading}>
-                  <Refresh className="mr-2 h-3 w-3" />
+                  <RefreshCw className="mr-2 h-3 w-3" />
                   Refresh
                 </DropdownMenuItem>
                 <DropdownMenuItem>

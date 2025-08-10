@@ -229,13 +229,20 @@ export async function PUT(request: NextRequest) {
     // Update properties
     const updatedProperties = []
     for (const propertyId of propertyIds) {
+      const updateData: any = {
+        ...data,
+        updatedAt: new Date(),
+      }
+      
+      // Convert fundingDeadline to Date if present
+      if (data.fundingDeadline) {
+        updateData.fundingDeadline = new Date(data.fundingDeadline)
+      }
+      
       const updated = await db.update(
         db.propertiesCollection,
         propertyId,
-        {
-          ...data,
-          updatedAt: new Date(),
-        }
+        updateData
       )
       
       if (updated) {

@@ -200,7 +200,7 @@ export function PropertyOverviewDashboard({
       data: generateTimeSeriesData('property-value', 30),
     }, { 
       size: 'large',
-      config: { chartType: 'line', timeRange, showGrid: true, animate: true }
+      config: { chartType: 'line', timeRange: timeRange as any, showGrid: true, animate: true }
     }),
 
     createDashboardWidget('property-activities', 'activity', 'Recent Activity', {
@@ -373,7 +373,7 @@ export function InvestmentAnalyticsDashboard({
       data: generateTimeSeriesData('investment-performance', 90),
     }, { 
       size: 'large',
-      config: { chartType: 'area', timeRange, showGrid: true, animate: true }
+      config: { chartType: 'area', timeRange: timeRange as any, showGrid: true, animate: true }
     }),
 
     createDashboardWidget('investment-activities', 'activity', 'Investment Activity', {
@@ -566,7 +566,7 @@ export function MarketAnalyticsDashboard({
       data: generateTimeSeriesData('price-trends', 365),
     }, { 
       size: 'large',
-      config: { chartType: 'line', timeRange, showGrid: true, animate: true }
+      config: { chartType: 'line', timeRange: timeRange as any, showGrid: true, animate: true }
     }),
 
     createDashboardWidget('market-insights', 'activity', 'Market Insights', {

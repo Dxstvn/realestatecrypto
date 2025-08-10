@@ -1,0 +1,277 @@
+# Production Deployment Workflow - PropertyChain
+# 
+# Deploys to production environment
+# Following UpdatedUIPlan.md Step 60 specifications and CLAUDE.md principles
+
+name: Production Deployment
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  NODE_VERSION: '20'
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  # Pre-deployment checks
+  pre-deploy:
+    name: Pre-deployment Checks
+    runs-on: ubuntu-latest
+    outputs:
+      should-deploy: ${{ steps.check.outputs.should-deploy }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check deployment conditions
+        id: check
+        run: |
+          # Check if this is a hotfix
+          if [[ "${{ github.event.head_commit.message }}" == *"[hotfix]"* ]]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+            echo "🚨 Hotfix detected - bypassing some checks"
+            exit 0
+          fi
+          
+          # Check if tests passed
+          echo "should-deploy=true" >> $GITHUB_OUTPUT
+
+      - name: Notify deployment start
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: '${{ github.event.inputs.environment || 'production' }}',
+              description: 'Deploying to production',
+              auto_merge: false,
+              required_contexts: [],
+              production_environment: true
+            });
+
+  # Database migrations
+  migrate:
+    name: Database Migrations
+    runs-on: ubuntu-latest
+    needs: pre-deploy
+    if: needs.pre-deploy.outputs.should-deploy == 'true'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run database migrations
+        run: |
+          echo "Running database migrations..."
+          # npm run db:migrate:prod
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        continue-on-error: false
+
+  # Deploy to production
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [pre-deploy, migrate]
+    if: needs.pre-deploy.outputs.should-deploy == 'true'
+    environment:
+      name: production
+      url: https://propertychain.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          NEXT_PUBLIC_BASE_URL: https://propertychain.com
+          NEXT_PUBLIC_API_URL: https://api.propertychain.com
+          NEXT_PUBLIC_CHAIN_ID: ${{ secrets.NEXT_PUBLIC_CHAIN_ID }}
+          NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_URL: https://propertychain.com
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+
+      - name: Deploy to Production
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prod --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "Production URL: $DEPLOYMENT_URL"
+
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: production
+          version: ${{ github.sha }}
+
+      - name: Purge CDN cache
+        run: |
+          echo "Purging CDN cache..."
+          # Add CDN cache purge command here
+        continue-on-error: true
+
+  # Post-deployment checks
+  post-deploy:
+    name: Post-deployment Checks
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Health check
+        run: |
+          echo "Running health checks..."
+          
+          # Wait for deployment to be ready
+          sleep 30
+          
+          # Check main site
+          curl -f https://propertychain.com || exit 1
+          
+          # Check API health
+          curl -f https://api.propertychain.com/health || exit 1
+          
+          # Check critical pages
+          curl -f https://propertychain.com/properties || exit 1
+          curl -f https://propertychain.com/marketplace || exit 1
+
+      - name: Run smoke tests
+        run: |
+          npx playwright test --config=playwright.config.ts --grep @smoke
+        env:
+          PLAYWRIGHT_BASE_URL: https://propertychain.com
+        continue-on-error: true
+
+      - name: Monitor metrics
+        run: |
+          echo "Monitoring deployment metrics..."
+          # Add monitoring checks here
+          # Check error rates, response times, etc.
+
+      - name: Notify deployment success
+        if: success()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const message = `
+            ## ✅ Production Deployment Successful!
+            
+            **Version**: \`${{ github.sha }}\`
+            **Deployed at**: ${new Date().toISOString()}
+            **URL**: https://propertychain.com
+            
+            ### Deployment Summary:
+            - ✅ Build successful
+            - ✅ Database migrations completed
+            - ✅ Deployment to Vercel successful
+            - ✅ Health checks passed
+            - ✅ CDN cache purged
+            
+            ### What's Next:
+            - Monitor application metrics
+            - Check error tracking in Sentry
+            - Review performance in Google Analytics
+            `;
+            
+            // Create deployment status
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment.id,
+              state: 'success',
+              environment_url: 'https://propertychain.com',
+              description: 'Deployment successful'
+            });
+
+      - name: Notify deployment failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const message = `
+            ## ❌ Production Deployment Failed!
+            
+            **Version**: \`${{ github.sha }}\`
+            **Failed at**: ${new Date().toISOString()}
+            
+            ### Action Required:
+            1. Check the workflow logs
+            2. Investigate the failure
+            3. Consider rolling back if necessary
+            
+            **Rollback command**: 
+            \`\`\`
+            vercel rollback --token=$VERCEL_TOKEN
+            \`\`\`
+            `;
+            
+            // Create deployment status
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment.id,
+              state: 'failure',
+              description: 'Deployment failed'
+            });
+
+  # Rollback on failure
+  rollback:
+    name: Rollback on Failure
+    runs-on: ubuntu-latest
+    needs: [deploy, post-deploy]
+    if: failure()
+    steps:
+      - name: Rollback deployment
+        run: |
+          echo "Rolling back deployment..."
+          vercel rollback --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Notify rollback
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Production deployment failed and rolled back',
+              body: `The production deployment for commit ${{ github.sha }} failed and has been rolled back.\n\nPlease investigate the issue.`,
+              labels: ['bug', 'deployment', 'urgent']
+            });

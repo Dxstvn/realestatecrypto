@@ -412,7 +412,7 @@ export function PropertyPerformanceRadarChart({
           <div className="flex items-center gap-2">
             <div 
               className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: CHART_COLORS.gray }}
+              style={{ backgroundColor: '#6b7280' }}
             />
             <span className="text-sm">Market Average</span>
           </div>

@@ -41,7 +41,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { PropertyCard } from '@/components/custom/property-card'
-import { PropertyChat } from '@/components/custom/property-chat'
+import { PropertyChatRoom } from '@/components/custom/property-chat'
 import { formatCurrency, formatPercentage, formatNumber } from '@/lib/format'
 import {
   MapPin,

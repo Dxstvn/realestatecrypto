@@ -68,7 +68,7 @@ export async function validateRequest<T>(
     return { data: validated, error: null }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+      const errors = error.issues.map(e => `${e.path.join('.')}: ${e.message}`)
       return { data: null, error: errors.join(', ') }
     }
     return { data: null, error: 'Invalid request body' }
@@ -221,7 +221,7 @@ export function handleApiError(error: any): NextResponse {
   console.error('API Error:', error)
   
   if (error instanceof z.ZodError) {
-    return errorResponse('Validation error: ' + error.errors.map(e => e.message).join(', '), 400)
+    return errorResponse('Validation error: ' + error.issues.map(e => e.message).join(', '), 400)
   }
   
   if (error.name === 'UnauthorizedError') {

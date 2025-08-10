@@ -82,15 +82,18 @@ const step2Schema = z.object({
 
 // Step 3: Investor Type
 const step3Schema = z.object({
-  investorType: z.enum(['individual', 'institutional', 'accredited'], {
-    required_error: 'Please select an investor type',
-  }),
-  investmentGoal: z.enum(['growth', 'income', 'balanced'], {
-    required_error: 'Please select your investment goal',
-  }),
-  experienceLevel: z.enum(['beginner', 'intermediate', 'expert'], {
-    required_error: 'Please select your experience level',
-  }),
+  investorType: z.enum(['individual', 'institutional', 'accredited']).refine(
+    (val) => val !== undefined,
+    { message: 'Please select an investor type' }
+  ),
+  investmentGoal: z.enum(['growth', 'income', 'balanced']).refine(
+    (val) => val !== undefined,
+    { message: 'Please select your investment goal' }
+  ),
+  experienceLevel: z.enum(['beginner', 'intermediate', 'expert']).refine(
+    (val) => val !== undefined,
+    { message: 'Please select your experience level' }
+  ),
 })
 
 // Step 4: Terms & Conditions
@@ -101,7 +104,7 @@ const step4Schema = z.object({
   privacyAccepted: z.boolean().refine((val) => val === true, {
     message: 'You must accept the privacy policy',
   }),
-  marketingOptIn: z.boolean().default(false),
+  marketingOptIn: z.boolean(),
 })
 
 // Combined schema

@@ -78,8 +78,6 @@ export function ToastProvider({
           warning: '⚠️',
           info: 'ℹ️',
         }}
-        // Pause on hover
-        pauseWhenPageIsHidden
         // Offset from edges
         offset="16px"
       />

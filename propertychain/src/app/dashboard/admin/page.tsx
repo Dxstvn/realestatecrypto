@@ -147,6 +147,7 @@ import {
   Headphones,
   Flag,
   Star,
+  User,
 } from 'lucide-react'
 import { formatCurrency, formatNumber, formatPercentage } from '@/lib/format'
 import { cn } from '@/lib/utils'

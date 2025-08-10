@@ -440,7 +440,16 @@ export default function HomePage() {
 // Testimonial Carousel Component
 // ============================================================================
 
-function TestimonialCarousel({ testimonials }: { testimonials: typeof testimonials }) {
+interface Testimonial {
+  id: number
+  name: string
+  role: string
+  image: string
+  content: string
+  rating: number
+}
+
+function TestimonialCarousel({ testimonials }: { testimonials: Testimonial[] }) {
   const [currentIndex, setCurrentIndex] = React.useState(0)
 
   // Auto-rotate every 5 seconds

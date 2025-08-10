@@ -84,7 +84,7 @@ import {
   Video,
   Info,
   Archive,
-  Mute,
+  VolumeX,
   Volume2,
   Eye,
   EyeOff,
@@ -664,7 +664,7 @@ function ChatHeader({
                 {thread.isPinned ? 'Unpin' : 'Pin'} Chat
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Mute className="mr-2 h-4 w-4" />
+                <VolumeX className="mr-2 h-4 w-4" />
                 {thread.isMuted ? 'Unmute' : 'Mute'} Notifications
               </DropdownMenuItem>
               <DropdownMenuSeparator />

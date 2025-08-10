@@ -233,6 +233,7 @@ export const ERROR_MESSAGES = {
 
 // Success Messages
 export const SUCCESS_MESSAGES = {
+  GENERIC: 'Operation completed successfully.',
   SAVED: 'Changes saved successfully.',
   DELETED: 'Item deleted successfully.',
   SENT: 'Message sent successfully.',

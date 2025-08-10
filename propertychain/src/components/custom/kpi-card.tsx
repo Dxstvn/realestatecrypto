@@ -182,8 +182,6 @@ function MiniChart({
           categories={['value']}
           colors={chartColors}
           className={cn('h-10', className)}
-          showAnimation
-          animationDuration={1000}
         />
       ) : null
 
@@ -195,8 +193,6 @@ function MiniChart({
           categories={['value']}
           colors={chartColors}
           className={cn('h-10', className)}
-          showAnimation
-          animationDuration={1000}
         />
       ) : null
 
@@ -208,8 +204,6 @@ function MiniChart({
           categories={['value']}
           colors={chartColors}
           className={cn('h-10', className)}
-          showAnimation
-          animationDuration={1000}
         />
       ) : null
 
@@ -234,7 +228,7 @@ function MiniChart({
       return categoryData ? (
         <CategoryBar
           values={categoryData.map(d => d.value)}
-          colors={categoryData.map(d => d.color || 'blue')}
+          colors={categoryData.map(d => d.color || 'blue') as any}
           className={cn('mt-2', className)}
           showAnimation
         />

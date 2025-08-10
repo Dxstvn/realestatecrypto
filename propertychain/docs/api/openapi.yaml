@@ -1,0 +1,693 @@
+openapi: 3.0.3
+info:
+  title: PropertyChain API
+  description: |
+    RESTful API for PropertyChain - Real Estate Tokenization Platform
+    
+    ## Authentication
+    Most endpoints require authentication via JWT tokens obtained through the `/auth/login` endpoint.
+    Include the token in the `Authorization` header as `Bearer <token>`.
+    
+    ## Rate Limiting
+    API requests are rate-limited to 100 requests per minute for authenticated users.
+    
+    ## Base URL
+    Production: `https://api.propertychain.com/v1`
+    Staging: `https://staging-api.propertychain.com/v1`
+  version: 1.0.0
+  contact:
+    name: PropertyChain Support
+    email: support@propertychain.com
+    url: https://propertychain.com/support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.propertychain.com/v1
+    description: Production server
+  - url: https://staging-api.propertychain.com/v1
+    description: Staging server
+  - url: http://localhost:3000/api
+    description: Development server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Properties
+    description: Property listings and management
+  - name: Transactions
+    description: Token purchases and transfers
+  - name: Users
+    description: User profile and management
+  - name: Portfolio
+    description: Investment portfolio management
+  - name: Market
+    description: Market data and analytics
+
+paths:
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register new user
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, firstName, lastName]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: SecurePass123!
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: Doe
+                referralCode:
+                  type: string
+                  example: REF123
+      responses:
+        201:
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        409:
+          description: Email already exists
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Login user
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+
+  /properties:
+    get:
+      tags: [Properties]
+      summary: List all properties
+      operationId: listProperties
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [price_asc, price_desc, roi_desc, recent]
+            default: recent
+        - name: location
+          in: query
+          schema:
+            type: string
+          description: Filter by location
+        - name: minPrice
+          in: query
+          schema:
+            type: number
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+        - name: propertyType
+          in: query
+          schema:
+            type: string
+            enum: [apartment, house, commercial, land]
+      responses:
+        200:
+          description: List of properties
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  properties:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Property'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags: [Properties]
+      summary: Create new property listing
+      operationId: createProperty
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProperty'
+      responses:
+        201:
+          description: Property created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+
+  /properties/{id}:
+    get:
+      tags: [Properties]
+      summary: Get property details
+      operationId: getProperty
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Property details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyDetail'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /properties/{id}/invest:
+    post:
+      tags: [Transactions]
+      summary: Invest in property
+      operationId: investInProperty
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tokenAmount, paymentMethod]
+              properties:
+                tokenAmount:
+                  type: integer
+                  minimum: 1
+                  example: 100
+                paymentMethod:
+                  type: string
+                  enum: [crypto, bank_transfer, credit_card]
+                walletAddress:
+                  type: string
+                  example: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb7"
+      responses:
+        200:
+          description: Investment successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          description: KYC verification required
+
+  /users/profile:
+    get:
+      tags: [Users]
+      summary: Get current user profile
+      operationId: getUserProfile
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+
+    patch:
+      tags: [Users]
+      summary: Update user profile
+      operationId: updateUserProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  $ref: '#/components/schemas/Address'
+      responses:
+        200:
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /portfolio:
+    get:
+      tags: [Portfolio]
+      summary: Get user portfolio
+      operationId: getPortfolio
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Portfolio data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+
+  /transactions:
+    get:
+      tags: [Transactions]
+      summary: List user transactions
+      operationId: listTransactions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [purchase, sale, distribution]
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        200:
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Transaction'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /market/overview:
+    get:
+      tags: [Market]
+      summary: Get market overview
+      operationId: getMarketOverview
+      responses:
+        200:
+          description: Market overview data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketOverview'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        refreshToken:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "usr_123456"
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        kycStatus:
+          type: string
+          enum: [pending, verified, rejected]
+        createdAt:
+          type: string
+          format: date-time
+
+    Property:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "prop_123456"
+        title:
+          type: string
+          example: "Modern Downtown Apartment"
+        location:
+          type: string
+          example: "Manhattan, New York"
+        price:
+          type: number
+          example: 500000
+        tokenPrice:
+          type: number
+          example: 100
+        totalTokens:
+          type: integer
+          example: 5000
+        availableTokens:
+          type: integer
+          example: 2500
+        expectedROI:
+          type: number
+          example: 7.5
+        propertyType:
+          type: string
+          enum: [apartment, house, commercial, land]
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    PropertyDetail:
+      allOf:
+        - $ref: '#/components/schemas/Property'
+        - type: object
+          properties:
+            description:
+              type: string
+            features:
+              type: array
+              items:
+                type: string
+            bedrooms:
+              type: integer
+            bathrooms:
+              type: integer
+            squareFeet:
+              type: integer
+            yearBuilt:
+              type: integer
+            documents:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+
+    CreateProperty:
+      type: object
+      required: [title, location, price, tokenPrice, totalTokens, propertyType]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        price:
+          type: number
+        tokenPrice:
+          type: number
+        totalTokens:
+          type: integer
+        expectedROI:
+          type: number
+        propertyType:
+          type: string
+          enum: [apartment, house, commercial, land]
+        features:
+          type: array
+          items:
+            type: string
+        bedrooms:
+          type: integer
+        bathrooms:
+          type: integer
+        squareFeet:
+          type: integer
+        yearBuilt:
+          type: integer
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "txn_123456"
+        type:
+          type: string
+          enum: [purchase, sale, distribution]
+        propertyId:
+          type: string
+        propertyTitle:
+          type: string
+        tokenAmount:
+          type: integer
+        amount:
+          type: number
+        status:
+          type: string
+          enum: [pending, completed, failed]
+        transactionHash:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        kycStatus:
+          type: string
+          enum: [pending, verified, rejected]
+        investmentLimit:
+          type: number
+        totalInvested:
+          type: number
+        joinedAt:
+          type: string
+          format: date-time
+
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        country:
+          type: string
+
+    Portfolio:
+      type: object
+      properties:
+        totalValue:
+          type: number
+        totalInvested:
+          type: number
+        totalReturns:
+          type: number
+        monthlyIncome:
+          type: number
+        properties:
+          type: array
+          items:
+            type: object
+            properties:
+              propertyId:
+                type: string
+              propertyTitle:
+                type: string
+              tokens:
+                type: integer
+              currentValue:
+                type: number
+              purchaseValue:
+                type: number
+              returns:
+                type: number
+
+    MarketOverview:
+      type: object
+      properties:
+        totalVolume:
+          type: number
+        totalProperties:
+          type: integer
+        activeInvestors:
+          type: integer
+        averageROI:
+          type: number
+        trending:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

@@ -1,12 +1,17 @@
 /**
- * Authentication Middleware - PropertyChain
+ * Security Middleware - PropertyChain
  * 
- * Protects routes and manages authentication flow
- * Following CLAUDE.md security standards
+ * Comprehensive security middleware with authentication, rate limiting, CSRF protection,
+ * and security headers following UpdatedUIPlan.md Step 66 and CLAUDE.md security standards
  */
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getToken } from 'next-auth/jwt'
+import { cdnMiddleware } from '@/lib/cache/cdn-config'
+import { rateLimiters } from '@/lib/security/rate-limiting'
+import { csrfProtection } from '@/lib/security/csrf'
+import { getSecurityHeadersForEnv } from '@/lib/security/headers'
 
 // Protected routes that require authentication
 const protectedRoutes = [
@@ -31,23 +36,86 @@ const authRoutes = [
   '/forgot-password',
 ]
 
-export function middleware(request: NextRequest) {
+// KYC required routes
+const kycRequiredRoutes = [
+  '/properties/invest',
+  '/transactions/create',
+]
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   
-  // Get authentication token from cookies
-  // In production, this would validate JWT token
-  const token = request.cookies.get('auth-token')
-  const isAuthenticated = !!token
+  // Apply rate limiting
+  if (pathname.startsWith('/api/')) {
+    // Use different rate limiters based on endpoint
+    let limiter = rateLimiters.api
+    
+    if (pathname.includes('/auth')) {
+      limiter = rateLimiters.auth
+    } else if (pathname.includes('/upload')) {
+      limiter = rateLimiters.upload
+    } else if (pathname.includes('/search')) {
+      limiter = rateLimiters.search
+    } else if (pathname.includes('/transaction')) {
+      limiter = rateLimiters.transaction
+    }
+    
+    const rateLimitResult = await limiter.check(request)
+    
+    if (!rateLimitResult.success) {
+      const response = NextResponse.json(
+        { error: 'Rate limit exceeded' },
+        { status: 429 }
+      )
+      
+      // Add rate limit headers
+      response.headers.set('X-RateLimit-Limit', rateLimitResult.limit.toString())
+      response.headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString())
+      response.headers.set('X-RateLimit-Reset', rateLimitResult.reset.toString())
+      
+      return response
+    }
+  }
   
-  // Check if user is admin (simplified - in production would decode JWT)
-  const userRole = request.cookies.get('user-role')?.value
-  const isAdmin = userRole === 'admin'
+  // Apply CSRF protection for state-changing requests
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method) && 
+      !pathname.startsWith('/api/csrf') &&
+      !pathname.startsWith('/api/health')) {
+    
+    const csrfResult = await csrfProtection.validateRequest(request)
+    
+    if (!csrfResult) {
+      return NextResponse.json(
+        { error: 'CSRF token validation failed' },
+        { status: 403 }
+      )
+    }
+  }
+  
+  // Apply CDN caching headers for static content
+  let response = NextResponse.next()
+  if (pathname.startsWith('/api/') || pathname.match(/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2)$/)) {
+    response = cdnMiddleware(request)
+  }
+  
+  // Get JWT token from NextAuth
+  const token = await getToken({ 
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET 
+  })
+  
+  const isAuthenticated = !!token
+  const userRole = token?.role as string | undefined
+  const kycStatus = token?.kycStatus as string | undefined
+  const isAdmin = userRole === 'ADMIN'
+  const isKYCVerified = kycStatus === 'VERIFIED'
   
   // Protect admin routes
   if (adminRoutes.some(route => pathname.startsWith(route))) {
     if (!isAuthenticated) {
       const url = new URL('/login', request.url)
       url.searchParams.set('from', pathname)
+      url.searchParams.set('error', 'SessionRequired')
       return NextResponse.redirect(url)
     }
     
@@ -56,11 +124,29 @@ export function middleware(request: NextRequest) {
     }
   }
   
+  // Check KYC requirements
+  if (kycRequiredRoutes.some(route => pathname.startsWith(route))) {
+    if (!isAuthenticated) {
+      const url = new URL('/login', request.url)
+      url.searchParams.set('from', pathname)
+      url.searchParams.set('error', 'SessionRequired')
+      return NextResponse.redirect(url)
+    }
+    
+    if (!isKYCVerified) {
+      const url = new URL('/onboarding/kyc', request.url)
+      url.searchParams.set('from', pathname)
+      url.searchParams.set('reason', 'KYCRequired')
+      return NextResponse.redirect(url)
+    }
+  }
+  
   // Protect authenticated routes
   if (protectedRoutes.some(route => pathname.startsWith(route))) {
     if (!isAuthenticated) {
       const url = new URL('/login', request.url)
       url.searchParams.set('from', pathname)
+      url.searchParams.set('error', 'SessionRequired')
       return NextResponse.redirect(url)
     }
   }
@@ -74,27 +160,9 @@ export function middleware(request: NextRequest) {
     }
   }
   
-  // Add security headers
-  const response = NextResponse.next()
-  
-  // Security headers following CLAUDE.md standards
-  response.headers.set('X-Frame-Options', 'DENY')
-  response.headers.set('X-Content-Type-Options', 'nosniff')
-  response.headers.set('X-XSS-Protection', '1; mode=block')
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  
-  // Updated CSP to allow Google Fonts and external resources
-  response.headers.set(
-    'Content-Security-Policy',
-    [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: https: blob:",
-      "connect-src 'self' https:",
-    ].join('; ')
-  )
+  // Apply comprehensive security headers
+  const securityHeaders = getSecurityHeadersForEnv()
+  response = securityHeaders.apply(request, response)
   
   return response
 }
@@ -103,12 +171,13 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
+     * 
+     * Note: API routes are now included for rate limiting and caching
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
   ],
 }

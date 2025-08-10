@@ -468,7 +468,7 @@ export function AppInstallPrompt({
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 
     // Show iOS install instructions
-    if (isIOSDevice && !window.navigator.standalone) {
+    if (isIOSDevice && !(window.navigator as any).standalone) {
       setTimeout(() => setShowPrompt(true), 3000)
     }
 
@@ -815,18 +815,5 @@ export function OfflineIndicator() {
 }
 
 // ============================================================================
-// Export all mobile components
+// All components are exported as named exports above
 // ============================================================================
-
-export {
-  BottomTabBar,
-  PullToRefresh,
-  SwipeableCard,
-  TouchRipple,
-  AppInstallPrompt,
-  MobileDrawer,
-  FloatingActionButton,
-  MobilePropertyCard,
-  MobileFilterBar,
-  OfflineIndicator,
-}

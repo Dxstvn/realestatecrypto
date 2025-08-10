@@ -43,7 +43,7 @@ import {
   ExternalLink,
   Info,
 } from 'lucide-react'
-import { formatCurrency, formatNumber } from '@/lib/format'
+import { formatCurrency, formatNumber, formatPercentage } from '@/lib/format'
 
 // ============================================================================
 // Types

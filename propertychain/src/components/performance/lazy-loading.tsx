@@ -427,7 +427,7 @@ export const LazyPropertyCard = dynamic(
 )
 
 export const LazyChart = dynamic(
-  () => import('@/components/custom/charts'),
+  () => import('@/components/custom/charts').then(mod => ({ default: mod.ChartContainer })),
   {
     loading: () => (
       <Card>
@@ -444,7 +444,7 @@ export const LazyChart = dynamic(
 )
 
 export const LazyMap = dynamic(
-  () => import('@/components/custom/map-component'),
+  () => import('@/components/custom/map-component').then(mod => ({ default: mod.MapComponent })),
   {
     loading: () => (
       <div className="h-96 w-full bg-muted flex items-center justify-center">

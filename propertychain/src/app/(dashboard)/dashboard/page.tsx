@@ -13,11 +13,12 @@ import Link from 'next/link'
 import {
   AreaChart,
   BarChart,
-  DonutChart,
+  PieChart,
   LineChart,
   Area,
   Bar,
   Line,
+  Pie,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -77,13 +78,14 @@ import {
   Star,
   ShoppingCart,
   Wallet,
-  PieChart,
+  PieChart as PieChartIcon,
   Target,
   Zap,
   CheckCircle,
   Clock,
   AlertTriangle,
   Info,
+  FileText,
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { toast } from 'sonner'
@@ -322,7 +324,7 @@ function QuickActions() {
     {
       title: 'View Portfolio',
       description: 'Check your investments',
-      icon: PieChart,
+      icon: PieChartIcon,
       color: 'bg-green-500 hover:bg-green-600',
       href: '/dashboard/portfolio',
     },
