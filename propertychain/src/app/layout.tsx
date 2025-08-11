@@ -18,7 +18,7 @@ import { AuthProvider } from "@/contexts/auth-context"
 import { NotificationProvider } from "@/contexts/notification-context"
 import { ErrorBoundary } from "@/components/error-boundary"
 import { Header } from "@/components/layouts/header"
-import { Footer } from "@/components/layouts/footer"
+import { FooterModern } from "@/components/layouts/footer-modern"
 import { WebVitalsReporter } from "./web-vitals"
 
 // Font configuration with exact specifications
@@ -178,7 +178,7 @@ export default function RootLayout({
             <main className="flex-1">
               {children}
             </main>
-            <Footer />
+            <FooterModern />
           </div>
         </RootProvider>
       </body>

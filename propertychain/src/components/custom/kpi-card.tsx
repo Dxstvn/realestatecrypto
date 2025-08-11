@@ -116,19 +116,19 @@ function TrendIndicator({
     up: {
       icon: ArrowUpRight,
       color: 'text-green-600',
-      bgColor: 'bg-green-50',
+      bgColor: '',
       label: 'Increase',
     },
     down: {
       icon: ArrowDownRight,
       color: 'text-red-600',
-      bgColor: 'bg-red-50',
+      bgColor: '',
       label: 'Decrease',
     },
     neutral: {
       icon: Minus,
       color: 'text-gray-600',
-      bgColor: 'bg-gray-50',
+      bgColor: '',
       label: 'No change',
     },
   }
@@ -138,8 +138,7 @@ function TrendIndicator({
 
   return (
     <div className={cn(
-      'inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium',
-      config.bgColor,
+      'inline-flex items-center gap-1 text-xs font-medium',
       config.color
     )}>
       <Icon className="h-3 w-3" />

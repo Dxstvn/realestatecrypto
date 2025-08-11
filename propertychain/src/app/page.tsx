@@ -19,22 +19,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { PropertyCard } from '@/components/custom/property-card'
 import { KPICard } from '@/components/custom/kpi-card'
-import { HeroSection } from '@/components/sections'
+import { HeroOptimized } from '@/components/sections/hero-optimized'
+import {
+  HowItWorksSection,
+  BenefitsSection,
+  TrustSection,
+  TestimonialsSection,
+  FAQSection,
+} from '@/components/sections/landing-sections'
 import { 
   ArrowRight, 
   Building, 
   TrendingUp, 
   Users,
-  User,
-  Search, 
-  ChevronRight,
-  Star,
-  Quote,
   DollarSign,
-  Shield,
-  Lock,
-  Globe,
-  Zap,
 } from 'lucide-react'
 
 // ============================================================================
@@ -52,7 +50,7 @@ const featuredProperties = [
     totalTokens: 8500,
     annualReturn: 8.5,
     monthlyYield: 0.71,
-    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop',
     status: 'funding' as const,
     type: 'Residential',
     fundingProgress: 65,
@@ -86,7 +84,7 @@ const featuredProperties = [
     totalTokens: 6400,
     annualReturn: 12.5,
     monthlyYield: 1.04,
-    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop',
     status: 'funding' as const,
     type: 'Hospitality',
     fundingProgress: 78,
@@ -103,7 +101,7 @@ const featuredProperties = [
     totalTokens: 12000,
     annualReturn: 9.8,
     monthlyYield: 0.82,
-    image: 'https://images.unsplash.com/photo-1565610222536-ef125c4a5825?w=800&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop',
     status: 'funded' as const,
     type: 'Industrial',
     fundingProgress: 100,
@@ -120,7 +118,7 @@ const featuredProperties = [
     totalTokens: 15000,
     annualReturn: 11.3,
     monthlyYield: 0.94,
-    image: 'https://images.unsplash.com/photo-1567684014761-d65d2c1a55e4?w=800&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop',
     status: 'funding' as const,
     type: 'Mixed-Use',
     fundingProgress: 35,
@@ -137,7 +135,7 @@ const featuredProperties = [
     totalTokens: 10500,
     annualReturn: 9.2,
     monthlyYield: 0.77,
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&h=600&fit=crop',
     status: 'funding' as const,
     type: 'Residential',
     fundingProgress: 58,
@@ -146,32 +144,6 @@ const featuredProperties = [
   },
 ]
 
-const testimonials = [
-  {
-    id: 1,
-    name: 'Sarah Johnson',
-    role: 'Real Estate Investor',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-    content: 'PropertyChain has democratized real estate investing. I can now diversify my portfolio with properties I could never afford on my own.',
-    rating: 5,
-  },
-  {
-    id: 2,
-    name: 'Michael Chen',
-    role: 'Tech Entrepreneur',
-    image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop',
-    content: 'The transparency and security of blockchain combined with real estate returns is exactly what I was looking for. Excellent platform!',
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: 'Emily Rodriguez',
-    role: 'Financial Advisor',
-    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
-    content: "I recommend PropertyChain to clients seeking alternative investments. The monthly yields and professional management are outstanding.",
-    rating: 5,
-  },
-]
 
 // ============================================================================
 // Homepage Component
@@ -182,16 +154,16 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero Section from UpdatedUIPlan.md Section 3 */}
-      <HeroSection />
+      {/* Optimized Hero Section with 60fps animations */}
+      <HeroOptimized />
 
       {/* Statistics Bar - 4 KPI cards, 280px width each (Section 4.1) */}
-      <section className="py-16 bg-gray-50 border-b">
+      <section className="py-16 bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <KPICard
               title="Total Value Locked"
-              value="$284M"
+              value="$125M"
               change={12.5}
               trend="up"
               icon={<DollarSign className="h-5 w-5" />}
@@ -199,7 +171,7 @@ export default function HomePage() {
             />
             <KPICard
               title="Active Investors"
-              value="12,847"
+              value="15,234"
               change={8.2}
               trend="up"
               icon={<Users className="h-5 w-5" />}
@@ -211,11 +183,11 @@ export default function HomePage() {
               change={15.3}
               trend="up"
               icon={<Building className="h-5 w-5" />}
-              description="Successfully tokenized"
+              description="Successfully funded"
             />
             <KPICard
-              title="Average ROI"
-              value="10.8%"
+              title="Average APY"
+              value="12.8%"
               change={2.1}
               trend="up"
               icon={<TrendingUp className="h-5 w-5" />}
@@ -226,7 +198,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Properties - 3x2 grid (Section 4.1) */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -235,8 +207,8 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold mb-4">Featured Investment Opportunities</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">Featured Investment Opportunities</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Discover premium properties with verified returns and professional management
             </p>
           </motion.div>
@@ -268,134 +240,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How it Works Timeline - 1-2-3 steps (Section 4.1) */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold mb-4">How PropertyChain Works</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Start investing in premium real estate in just three simple steps
-            </p>
-          </motion.div>
+      {/* How It Works Section - Enhanced */}
+      <HowItWorksSection />
 
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  step: '1',
-                  title: 'Register & Verify',
-                  description: 'Create your account and complete KYC verification to start investing',
-                  icon: <User className="h-6 w-6" />,
-                },
-                {
-                  step: '2',
-                  title: 'Browse Properties',
-                  description: 'Explore verified properties with detailed financials and projections',
-                  icon: <Search className="h-6 w-6" />,
-                },
-                {
-                  step: '3',
-                  title: 'Invest & Earn',
-                  description: 'Purchase property tokens and receive monthly rental yields',
-                  icon: <TrendingUp className="h-6 w-6" />,
-                },
-              ].map((item, index) => (
-                <motion.div
-                  key={item.step}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.2 }}
-                  viewport={{ once: true }}
-                  className="relative"
-                >
-                  {/* Connector Line (hidden on mobile) */}
-                  {index < 2 && (
-                    <div className="hidden md:block absolute top-12 left-[60%] w-full h-0.5 bg-gray-300">
-                      <div className="absolute right-0 top-1/2 -translate-y-1/2">
-                        <ChevronRight className="h-4 w-4 text-gray-400" />
-                      </div>
-                    </div>
-                  )}
+      {/* Benefits Section */}
+      <BenefitsSection />
 
-                  <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-[#007BFF] text-white text-2xl font-bold mb-4">
-                      {item.step}
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                    <p className="text-gray-600">{item.description}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+      {/* Trust & Security Section */}
+      <TrustSection />
 
-          <div className="text-center mt-12">
-            <Button
-              size="lg"
-              className="h-12 bg-[#007BFF] hover:bg-[#0062CC]"
-              onClick={() => router.push('/register')}
-            >
-              Get Started Now
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </section>
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
-      {/* Social Proof Carousel - Auto-rotate every 5 seconds */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold mb-4">What Our Investors Say</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Join thousands of satisfied investors building wealth through PropertyChain
-            </p>
-          </motion.div>
+      {/* FAQ Section */}
+      <FAQSection />
 
-          <div className="max-w-4xl mx-auto">
-            <TestimonialCarousel testimonials={testimonials} />
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Indicators */}
-      <section className="py-16 bg-gray-50 border-t">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-            <div className="flex items-center gap-3 text-gray-600">
-              <Shield className="h-6 w-6" />
-              <span className="font-medium">SEC Compliant</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <Lock className="h-6 w-6" />
-              <span className="font-medium">Bank-Level Security</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <Globe className="h-6 w-6" />
-              <span className="font-medium">Global Access</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <Zap className="h-6 w-6" />
-              <span className="font-medium">Instant Transactions</span>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-[#007BFF]">
+      <section className="py-20 bg-gradient-to-b from-gray-900 to-black">
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -407,13 +269,13 @@ export default function HomePage() {
               Ready to Start Your Investment Journey?
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Join PropertyChain today and access institutional-grade real estate investments
+              Join PropertyLend today and access institutional-grade real estate investments
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
                 variant="secondary"
-                className="h-14 px-8 text-lg bg-white text-[#007BFF] hover:bg-gray-100"
+                className="h-14 px-8 text-lg bg-white text-purple-700 hover:bg-gray-100"
                 onClick={() => router.push('/register')}
               >
                 Create Free Account
@@ -422,10 +284,10 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-14 px-8 text-lg border-white text-white hover:bg-white/10"
-                onClick={() => router.push('/properties/explore')}
+                className="h-14 px-8 text-lg border-white text-white hover:bg-white/10 backdrop-blur-sm"
+                onClick={() => router.push('/pools')}
               >
-                Browse Properties
+                Browse Pools
                 <Building className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -436,86 +298,3 @@ export default function HomePage() {
   )
 }
 
-// ============================================================================
-// Testimonial Carousel Component
-// ============================================================================
-
-interface Testimonial {
-  id: number
-  name: string
-  role: string
-  image: string
-  content: string
-  rating: number
-}
-
-function TestimonialCarousel({ testimonials }: { testimonials: Testimonial[] }) {
-  const [currentIndex, setCurrentIndex] = React.useState(0)
-
-  // Auto-rotate every 5 seconds
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length)
-    }, 5000)
-    return () => clearInterval(timer)
-  }, [testimonials.length])
-
-  return (
-    <div className="relative">
-      <div className="overflow-hidden">
-        <div
-          className="flex transition-transform duration-500 ease-out"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-        >
-          {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
-              <Card className="border-0 shadow-lg">
-                <CardContent className="p-8">
-                  <div className="flex items-start gap-4 mb-4">
-                    <Image
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      width={60}
-                      height={60}
-                      className="rounded-full"
-                    />
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-lg">{testimonial.name}</h4>
-                      <p className="text-sm text-gray-600">{testimonial.role}</p>
-                      <div className="flex gap-1 mt-1">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        ))}
-                      </div>
-                    </div>
-                    <Quote className="h-8 w-8 text-gray-200" />
-                  </div>
-                  <p className="text-gray-700 italic text-lg leading-relaxed">
-                    "{testimonial.content}"
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Dots Indicator */}
-      <div className="flex justify-center gap-2 mt-6">
-        {testimonials.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={cn(
-              'h-2 rounded-full transition-all duration-300',
-              index === currentIndex
-                ? 'w-8 bg-[#007BFF]'
-                : 'w-2 bg-gray-300 hover:bg-gray-400'
-            )}
-            aria-label={`Go to testimonial ${index + 1}`}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
