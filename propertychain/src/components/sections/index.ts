@@ -5,3 +5,4 @@
  */
 
 export { HeroSection } from './hero'
+export { HeroOptimized } from './hero-optimized'

@@ -5,6 +5,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import design system tokens */
+@import '../styles/design-tokens.css';
+
 @layer base {
   :root {
     /* WEB3 DEFI DARK MODE - Default Theme */
@@ -63,50 +66,50 @@
   }
 
   .light {
-    /* Light mode - For backwards compatibility only */
+    /* Light mode - Professional DeFi theme */
     --background: 0 0% 100%;          /* #FFFFFF */
-    --foreground: 0 0% 13%;           /* #212121 */
+    --foreground: 220 9% 15%;         /* #222831 */
     
-    /* Light mode Primary - Blue */
-    --primary: 211 100% 50%;          /* #007BFF */
+    /* Light mode Primary - DeFi Purple */
+    --primary: 245 45% 63%;           /* #667EEA */
     --primary-foreground: 0 0% 100%;  /* #FFFFFF */
     
     /* Light mode Secondary */
-    --secondary: 211 100% 95%;        /* #E6F2FF */
-    --secondary-foreground: 211 100% 20%; /* #003166 */
+    --secondary: 0 0% 96%;            /* #F5F5F5 */
+    --secondary-foreground: 220 9% 25%; /* #393E46 */
     
     /* Light mode Muted */
-    --muted: 0 0% 96%;                /* #F5F5F5 */
-    --muted-foreground: 0 0% 45%;     /* #757575 */
+    --muted: 0 0% 98%;                /* #FAFAFA */
+    --muted-foreground: 220 9% 46%;   /* #6B7280 */
     
     /* Light mode Accent */
-    --accent: 211 100% 95%;           /* #E6F2FF */
-    --accent-foreground: 211 100% 30%; /* #004A99 */
+    --accent: 0 0% 96%;               /* #F5F5F5 */
+    --accent-foreground: 220 9% 15%;  /* #222831 */
     
     /* Light mode Destructive */
-    --destructive: 354 70% 54%;       /* #DC3545 */
+    --destructive: 0 84% 60%;         /* #EF4444 */
     --destructive-foreground: 0 0% 100%; /* #FFFFFF */
     
     /* Light mode Success */
-    --success: 123 38% 57%;           /* #4CAF50 */
+    --success: 142 76% 36%;           /* #10B981 */
     --success-foreground: 0 0% 100%;  /* #FFFFFF */
     
     /* Light mode Warning */
-    --warning: 9 100% 64%;            /* #FF6347 */
+    --warning: 38 92% 50%;            /* #F59E0B */
     --warning-foreground: 0 0% 100%;  /* #FFFFFF */
     
     /* Light mode Borders and Inputs */
-    --border: 0 0% 88%;               /* #E0E0E0 */
-    --input: 0 0% 88%;                /* #E0E0E0 */
-    --ring: 211 100% 50%;             /* #007BFF */
+    --border: 0 0% 89%;               /* #E4E4E7 */
+    --input: 0 0% 100%;               /* #FFFFFF */
+    --ring: 245 45% 63%;              /* #667EEA */
     
     /* Light mode Card */
     --card: 0 0% 100%;                /* #FFFFFF */
-    --card-foreground: 0 0% 13%;      /* #212121 */
+    --card-foreground: 220 9% 15%;    /* #222831 */
     
     /* Light mode Popover */
     --popover: 0 0% 100%;             /* #FFFFFF */
-    --popover-foreground: 0 0% 13%;   /* #212121 */
+    --popover-foreground: 220 9% 15%; /* #222831 */
   }
 }
 
@@ -542,5 +545,58 @@
   .theme-changing,
   .theme-changing * {
     transition: none !important;
+  }
+  
+  /* Mobile Optimizations */
+  @media (max-width: 768px) {
+    /* Adjust font sizes for mobile */
+    h1 { @apply text-3xl; }
+    h2 { @apply text-2xl; }
+    h3 { @apply text-xl; }
+    h4 { @apply text-lg; }
+    
+    /* Mobile padding adjustments */
+    .container {
+      @apply px-4;
+    }
+    
+    /* Optimize touch targets */
+    button, a {
+      min-height: 44px;
+    }
+    
+    /* Safe area for notched devices */
+    .safe-area-top {
+      padding-top: env(safe-area-inset-top);
+    }
+    
+    .safe-area-bottom {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    /* Prevent horizontal scroll */
+    body {
+      overflow-x: hidden;
+    }
+    
+    /* Mobile card spacing */
+    .mobile-card {
+      @apply mx-2;
+    }
+  }
+  
+  /* Touch device optimizations */
+  @media (hover: none) and (pointer: coarse) {
+    /* Add active states for better touch feedback */
+    button:active, a:active {
+      @apply scale-95 transition-transform;
+    }
+  }
+  
+  /* Landscape mobile adjustments */
+  @media (max-width: 768px) and (orientation: landscape) {
+    /* Reduce vertical spacing in landscape */
+    .py-24 { @apply py-12; }
+    .py-12 { @apply py-6; }
   }
 }

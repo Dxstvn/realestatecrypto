@@ -9,6 +9,7 @@
 'use client'
 
 import * as React from 'react'
+import { Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils/cn'
@@ -149,7 +150,7 @@ const allProperties = generateMockProperties(150)
 // Property Exploration Component
 // ============================================================================
 
-export default function PropertyExplorePage() {
+function PropertyExploreContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -781,5 +782,22 @@ function FilterPanel({ filters, setFilters, onApply, onClear }: FilterPanelProps
         </div>
       </div>
     </ScrollArea>
+  )
+}
+
+// Export with Suspense boundary
+export default function PropertyExplorePage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <PropertyCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    }>
+      <PropertyExploreContent />
+    </Suspense>
   )
 }

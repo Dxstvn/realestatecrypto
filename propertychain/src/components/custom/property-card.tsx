@@ -191,13 +191,13 @@ export function PropertyCard({
                     <Button
                       size="icon"
                       variant="secondary"
-                      className="h-8 w-8 bg-white/90 backdrop-blur hover:bg-white"
+                      className="h-8 w-8 bg-white/90 backdrop-blur hover:bg-white text-gray-700"
                       onClick={handleFavorite}
                     >
                       <Heart
                         className={cn(
                           'h-4 w-4',
-                          isFavorited && 'fill-red-500 text-red-500'
+                          isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-700'
                         )}
                       />
                     </Button>
@@ -214,10 +214,10 @@ export function PropertyCard({
                     <Button
                       size="icon"
                       variant="secondary"
-                      className="h-8 w-8 bg-white/90 backdrop-blur hover:bg-white"
+                      className="h-8 w-8 bg-white/90 backdrop-blur hover:bg-white text-gray-700"
                       onClick={handleShare}
                     >
-                      <Share2 className="h-4 w-4" />
+                      <Share2 className="h-4 w-4 text-gray-700" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>

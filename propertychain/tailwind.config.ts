@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+import { COLORS, SPACING, RADIUS, TYPOGRAPHY, ANIMATION, SHADOWS } from "./src/lib/design-system/constants"
 
 const config = {
   darkMode: ["class"],
@@ -19,90 +20,162 @@ const config = {
     },
     extend: {
       colors: {
-        // Existing shadcn CSS variable colors
+        // CSS variable colors for shadcn compatibility
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         
-        // Primary Blue Palette (Trust & Security)
+        // Design System Colors - Phase 1.2 Enhanced
+        // Background colors
+        'bg-primary': COLORS.background.primary,
+        'bg-secondary': COLORS.background.secondary,
+        'bg-tertiary': COLORS.background.tertiary,
+        'bg-glass': COLORS.background.glass,
+        'bg-overlay': COLORS.background.overlay,
+        
+        // Text colors with WCAG AAA compliance
+        'text-primary': COLORS.text.primary,
+        'text-secondary': COLORS.text.secondary,
+        'text-tertiary': COLORS.text.tertiary,
+        'text-inverse': COLORS.text.inverse,
+        'text-disabled': COLORS.text.disabled,
+        
+        // Brand colors
         primary: {
-          50: '#E6F2FF',
-          100: '#CCE0FF',
-          200: '#99C2FF',
-          300: '#66A3FF',
-          400: '#3385FF',
-          DEFAULT: '#007BFF', // PRIMARY ACTION COLOR
-          500: '#007BFF',
-          600: '#0062CC',
-          700: '#004A99',
-          800: '#003166',
-          900: '#001933',
+          50: '#EEF2FF',
+          100: '#E0E7FF',
+          200: '#C7D2FE',
+          300: '#A5B4FC',
+          400: '#818CF8',
+          500: COLORS.brand.primary,
+          DEFAULT: COLORS.brand.primary,
+          600: COLORS.brand.primaryDark,
+          700: '#4338CA',
+          800: '#3730A3',
+          900: '#312E81',
+          950: '#1E1B4B',
           foreground: 'hsl(var(--primary-foreground))'
         },
         
-        // Secondary colors (keeping shadcn compatibility)
+        // Secondary purple
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
+          50: '#FAF5FF',
+          100: '#F3E8FF',
+          200: '#E9D5FF',
+          300: '#D8B4FE',
+          400: '#C084FC',
+          500: COLORS.brand.secondary,
+          DEFAULT: COLORS.brand.secondary,
+          600: COLORS.brand.secondaryDark,
+          700: '#6B21A8',
+          800: '#581C87',
+          900: '#3B0764',
+          950: '#2E1065',
           foreground: 'hsl(var(--secondary-foreground))'
         },
         
-        // Destructive/Error Red Palette
+        // Success (Green)
+        success: {
+          50: '#F0FDF4',
+          100: '#DCFCE7',
+          200: '#BBF7D0',
+          300: '#86EFAC',
+          400: '#4ADE80',
+          500: COLORS.semantic.success,
+          DEFAULT: COLORS.semantic.success,
+          600: COLORS.semantic.successDark,
+          700: '#047857',
+          800: '#065F46',
+          900: '#064E3B',
+          950: '#022C22'
+        },
+        
+        // Warning (Yellow/Orange)
+        warning: {
+          50: '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          300: COLORS.semantic.warningLight,
+          400: '#FBBF24',
+          500: COLORS.semantic.warning,
+          DEFAULT: COLORS.semantic.warning,
+          600: COLORS.semantic.warningDark,
+          700: '#B45309',
+          800: '#92400E',
+          900: '#78350F',
+          950: '#451A03'
+        },
+        
+        // Danger (Red)
+        danger: {
+          50: '#FEF2F2',
+          100: '#FEE2E2',
+          200: '#FECACA',
+          300: COLORS.semantic.dangerLight,
+          400: '#F87171',
+          500: COLORS.semantic.danger,
+          DEFAULT: COLORS.semantic.danger,
+          600: COLORS.semantic.dangerDark,
+          700: '#B91C1C',
+          800: '#991B1B',
+          900: '#7F1D1D',
+          950: '#450A0A'
+        },
+        
+        // Info (Blue)
+        info: {
+          50: '#EFF6FF',
+          100: '#DBEAFE',
+          200: '#BFDBFE',
+          300: '#93C5FD',
+          400: COLORS.semantic.infoLight,
+          500: COLORS.semantic.info,
+          DEFAULT: COLORS.semantic.info,
+          600: COLORS.semantic.infoDark,
+          700: '#1D4ED8',
+          800: '#1E40AF',
+          900: '#1E3A8A',
+          950: '#172554'
+        },
+        
+        // Yield/APY specific colors
+        yield: {
+          senior: COLORS.yield.senior,
+          junior: COLORS.yield.junior,
+          apy: COLORS.yield.apy,
+          tvl: COLORS.yield.tvl
+        },
+        
+        // Neon accent colors
+        neon: {
+          green: COLORS.neon.green,
+          purple: COLORS.neon.purple,
+          blue: COLORS.neon.blue,
+          yellow: COLORS.neon.yellow
+        },
+        
+        // Gray scale with proper contrast
+        gray: {
+          50: '#FAFAFA',
+          100: '#F4F4F5',
+          200: '#E4E4E7',
+          300: '#D4D4D8',
+          400: '#A1A1AA',
+          500: '#71717A',
+          600: '#52525B',
+          700: '#3F3F46',
+          800: '#27272A',
+          900: '#18181B',
+          950: '#09090B'
+        },
+        
+        // Existing shadcn colors
         destructive: {
-          50: '#FFEBEE',
-          100: '#FFCDD2',
-          200: '#EF9A9A',
-          300: '#E57373',
-          400: '#EF5350',
-          DEFAULT: '#DC3545', // ERROR PRIMARY
-          500: '#DC3545',
-          600: '#C62828',
-          700: '#B71C1C',
+          DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))'
         },
-        
-        // Success Green Palette (Positive Metrics)
-        success: {
-          50: '#E8F5E9',
-          100: '#C8E6C9',
-          200: '#A5D6A7',
-          300: '#81C784',
-          400: '#66BB6A',
-          DEFAULT: '#4CAF50', // SUCCESS PRIMARY
-          500: '#4CAF50',
-          600: '#43A047',
-          700: '#388E3C',
-          800: '#2E7D32',
-          900: '#1B5E20'
-        },
-        
-        // Warning Orange Palette
-        warning: {
-          50: '#FFF3E0',
-          100: '#FFE0B2',
-          200: '#FFCC80',
-          300: '#FFB74D',
-          400: '#FFA726',
-          DEFAULT: '#FF6347', // WARNING PRIMARY
-          500: '#FF6347'
-        },
-        
-        // Neutral Gray Palette
-        neutral: {
-          50: '#FAFAFA',   // Off-white background
-          100: '#F5F5F5',  // Light gray for card backgrounds
-          200: '#EEEEEE',  // Border gray lightest
-          300: '#E0E0E0',  // Divider lines
-          400: '#BDBDBD',  // Disabled text
-          500: '#9E9E9E',  // Secondary text
-          600: '#757575',  // Icon default color
-          700: '#616161',  // Body text secondary
-          800: '#424242',  // Body text primary
-          900: '#212121',  // Heading text
-        },
-        
-        // Muted colors (keeping shadcn compatibility)
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))'
@@ -121,194 +194,163 @@ const config = {
         }
       },
       
-      fontFamily: {
-        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        mono: ['JetBrains Mono', 'SF Mono', 'Monaco', 'monospace'],
-      },
-      
-      fontSize: {
-        // Display sizes
-        'display-lg': ['60px', { lineHeight: '72px', letterSpacing: '-0.04em' }],
-        'display': ['48px', { lineHeight: '56px', letterSpacing: '-0.03em' }],
-        
-        // Heading sizes (H1-H6)
-        'h1': ['36px', { lineHeight: '44px', letterSpacing: '-0.03em', fontWeight: '700' }],
-        'h2': ['30px', { lineHeight: '38px', letterSpacing: '-0.02em', fontWeight: '700' }],
-        'h3': ['24px', { lineHeight: '32px', letterSpacing: '-0.02em', fontWeight: '600' }],
-        'h4': ['20px', { lineHeight: '30px', letterSpacing: '-0.01em', fontWeight: '600' }],
-        'h5': ['18px', { lineHeight: '28px', letterSpacing: '0', fontWeight: '600' }],
-        'h6': ['16px', { lineHeight: '24px', letterSpacing: '0', fontWeight: '600' }],
-        
-        // Body text sizes
-        'body-lg': ['18px', { lineHeight: '28px', letterSpacing: '0' }],
-        'body': ['16px', { lineHeight: '24px', letterSpacing: '0' }],
-        'body-sm': ['14px', { lineHeight: '20px', letterSpacing: '0.01em' }],
-        'caption': ['12px', { lineHeight: '16px', letterSpacing: '0.02em' }],
-        'overline': ['11px', { lineHeight: '16px', letterSpacing: '0.08em', fontWeight: '600' }],
-        
-        // Financial data typography
-        'value-lg': ['32px', { lineHeight: '40px', letterSpacing: '-0.02em', fontWeight: '700' }],
-        'value-md': ['24px', { lineHeight: '32px', letterSpacing: '-0.01em', fontWeight: '600' }],
-        'value-sm': ['18px', { lineHeight: '24px', letterSpacing: '0', fontWeight: '600' }],
-        'table-data': ['14px', { lineHeight: '20px', letterSpacing: '0', fontWeight: '500' }],
-        'value-micro': ['12px', { lineHeight: '16px', letterSpacing: '0', fontWeight: '600' }],
-      },
-      
+      // Spacing from design system
       spacing: {
-        // 8px base unit spacing scale
-        '0.5': '4px',   // micro spacing
-        '1': '8px',     // tight spacing
-        '1.5': '12px',  // compact spacing
-        '2': '16px',    // default spacing
-        '2.5': '20px',  // comfortable spacing
-        '3': '24px',    // section spacing within cards
-        '4': '32px',    // spacing between cards
-        '5': '40px',    // major section spacing
-        '6': '48px',    // large section breaks
-        '8': '64px',    // page section spacing
-        '10': '80px',   // major page sections
-        '12': '96px',   // hero section padding
-        '16': '128px',
-        '20': '160px',
-        '24': '192px',
-        '32': '256px',
+        'xs': SPACING.xs,
+        'sm': SPACING.sm,
+        'md': SPACING.md,
+        'lg': SPACING.lg,
+        'xl': SPACING.xl,
+        '2xl': SPACING['2xl'],
+        '3xl': SPACING['3xl'],
+        '4xl': SPACING['4xl'],
+        '5xl': SPACING['5xl']
       },
       
+      // Border radius from design system
       borderRadius: {
-        'none': '0px',
-        'subtle': '4px',
-        DEFAULT: '8px',
-        'md': '12px',
-        'lg': '16px',
-        'xl': '20px',
-        'pill': '9999px',
-        // Keep shadcn variable-based radius
-        'radius': 'var(--radius)',
-        'radius-md': 'calc(var(--radius) - 2px)',
-        'radius-sm': 'calc(var(--radius) - 4px)'
+        'sm': RADIUS.sm,
+        'md': RADIUS.md,
+        'lg': RADIUS.lg,
+        'xl': RADIUS.xl,
+        '2xl': RADIUS['2xl'],
+        'full': RADIUS.full
       },
       
-      boxShadow: {
-        'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        'sm': '0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        DEFAULT: '0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        'md': '0 6px 10px -3px rgba(0, 0, 0, 0.04)',
-        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-        'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-        'none': 'none',
+      // Typography from design system
+      fontSize: {
+        'display-lg': [TYPOGRAPHY.displayLg.fontSize, { 
+          lineHeight: TYPOGRAPHY.displayLg.lineHeight,
+          fontWeight: TYPOGRAPHY.displayLg.fontWeight,
+          letterSpacing: TYPOGRAPHY.displayLg.letterSpacing
+        }],
+        'display': [TYPOGRAPHY.display.fontSize, {
+          lineHeight: TYPOGRAPHY.display.lineHeight,
+          fontWeight: TYPOGRAPHY.display.fontWeight,
+          letterSpacing: TYPOGRAPHY.display.letterSpacing
+        }],
+        'h1': [TYPOGRAPHY.h1.fontSize, {
+          lineHeight: TYPOGRAPHY.h1.lineHeight,
+          fontWeight: TYPOGRAPHY.h1.fontWeight,
+          letterSpacing: TYPOGRAPHY.h1.letterSpacing
+        }],
+        'h2': [TYPOGRAPHY.h2.fontSize, {
+          lineHeight: TYPOGRAPHY.h2.lineHeight,
+          fontWeight: TYPOGRAPHY.h2.fontWeight,
+          letterSpacing: TYPOGRAPHY.h2.letterSpacing
+        }],
+        'h3': [TYPOGRAPHY.h3.fontSize, {
+          lineHeight: TYPOGRAPHY.h3.lineHeight,
+          fontWeight: TYPOGRAPHY.h3.fontWeight,
+          letterSpacing: TYPOGRAPHY.h3.letterSpacing
+        }],
+        'h4': [TYPOGRAPHY.h4.fontSize, {
+          lineHeight: TYPOGRAPHY.h4.lineHeight,
+          fontWeight: TYPOGRAPHY.h4.fontWeight,
+          letterSpacing: TYPOGRAPHY.h4.letterSpacing
+        }],
+        'body-lg': [TYPOGRAPHY.bodyLg.fontSize, {
+          lineHeight: TYPOGRAPHY.bodyLg.lineHeight,
+          fontWeight: TYPOGRAPHY.bodyLg.fontWeight
+        }],
+        'body-sm': [TYPOGRAPHY.bodySm.fontSize, {
+          lineHeight: TYPOGRAPHY.bodySm.lineHeight,
+          fontWeight: TYPOGRAPHY.bodySm.fontWeight
+        }],
+        'caption': [TYPOGRAPHY.caption.fontSize, {
+          lineHeight: TYPOGRAPHY.caption.lineHeight,
+          fontWeight: TYPOGRAPHY.caption.fontWeight,
+          letterSpacing: TYPOGRAPHY.caption.letterSpacing
+        }]
       },
       
+      // Animation durations
       transitionDuration: {
-        '200': '200ms', // Standard duration
-        '300': '300ms', // For larger elements
-        '400': '400ms',
-        '500': '500ms',
-        '600': '600ms',
-        '700': '700ms',
-        '800': '800ms',
+        'instant': ANIMATION.instant,
+        'fast': ANIMATION.fast,
+        'normal': ANIMATION.normal,
+        'slow': ANIMATION.slow,
+        'slower': ANIMATION.slower,
+        'slowest': ANIMATION.slowest
       },
       
+      // Animation timing functions
       transitionTimingFunction: {
-        'ease-out': 'cubic-bezier(0, 0, 0.2, 1)',
-        'ease-in': 'cubic-bezier(0.4, 0, 1, 1)',
-        'ease-in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'linear': ANIMATION.easing.linear,
+        'ease-in': ANIMATION.easing.easeIn,
+        'ease-out': ANIMATION.easing.easeOut,
+        'ease-in-out': ANIMATION.easing.easeInOut,
+        'bounce': ANIMATION.easing.bounce
+      },
+      
+      // Box shadows
+      boxShadow: {
+        'sm': SHADOWS.sm,
+        'md': SHADOWS.md,
+        'lg': SHADOWS.lg,
+        'xl': SHADOWS.xl,
+        '2xl': SHADOWS['2xl'],
+        'inner': SHADOWS.inner,
+        'glow-primary': SHADOWS.glow.primary,
+        'glow-success': SHADOWS.glow.success,
+        'glow-danger': SHADOWS.glow.danger,
+        'glow-neon': SHADOWS.glow.neon,
+        'glass': SHADOWS.glass
+      },
+      
+      // Background gradients
+      backgroundImage: {
+        'gradient-primary': COLORS.gradients.primary,
+        'gradient-secondary': COLORS.gradients.secondary,
+        'gradient-success': COLORS.gradients.success,
+        'gradient-yield': COLORS.gradients.yield,
+        'gradient-hero': COLORS.gradients.hero,
+        'gradient-card': COLORS.gradients.card
       },
       
       keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' }
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" }
         },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' }
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" }
         },
-        'float': {
-          '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
-          '50%': { transform: 'translateY(-20px) rotate(5deg)' }
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' }
         },
-        'slide-in-right': {
-          from: { transform: 'translateX(100%)' },
-          to: { transform: 'translateX(0)' }
+        'glow-pulse': {
+          '0%, 100%': { 
+            boxShadow: '0 0 20px rgba(99, 102, 241, 0.5), 0 0 40px rgba(99, 102, 241, 0.3)',
+            opacity: '1'
+          },
+          '50%': { 
+            boxShadow: '0 0 30px rgba(99, 102, 241, 0.8), 0 0 60px rgba(99, 102, 241, 0.6)',
+            opacity: '0.9'
+          }
         },
-        'slide-in-left': {
-          from: { transform: 'translateX(-100%)' },
-          to: { transform: 'translateX(0)' }
+        'gradient-shift': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' }
         },
-        'fade-in': {
-          from: { opacity: '0' },
-          to: { opacity: '1' }
-        },
-        'fade-out': {
-          from: { opacity: '1' },
-          to: { opacity: '0' }
-        },
-        'scale-in': {
-          from: { transform: 'scale(0.95)' },
-          to: { transform: 'scale(1)' }
-        },
-        'scale-out': {
-          from: { transform: 'scale(1)' },
-          to: { transform: 'scale(0.95)' }
-        },
-        'spin': {
-          from: { transform: 'rotate(0deg)' },
-          to: { transform: 'rotate(360deg)' }
-        },
-        'pulse': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.5' }
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-6px)' }
         }
       },
-      
       animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        'float': 'float 6s ease-in-out infinite',
-        'float-slow': 'float 8s ease-in-out infinite',
-        'slide-in-right': 'slide-in-right 0.3s ease-out',
-        'slide-in-left': 'slide-in-left 0.3s ease-out',
-        'fade-in': 'fade-in 0.2s ease-out',
-        'fade-out': 'fade-out 0.2s ease-in',
-        'scale-in': 'scale-in 0.2s ease-out',
-        'scale-out': 'scale-out 0.2s ease-in',
-        'spin': 'spin 1s linear infinite',
-        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-      },
-      
-      screens: {
-        'xs': '475px',
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
-        '2xl': '1440px',
-        '3xl': '1920px',
-      },
-      
-      zIndex: {
-        'dropdown': '50',
-        'sticky': '100',
-        'overlay': '200',
-        'modal': '300',
-        'toast': '500',
-      },
-      
-      minHeight: {
-        'hero-mobile': '700px',
-        'hero-desktop': '800px',
-      },
-      
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'hero-gradient': 'linear-gradient(135deg, #E6F2FF, #FFFFFF, #E6F2FF)',
-      },
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 2s infinite linear",
+        'glow-pulse': "glow-pulse 2s ease-in-out infinite",
+        'gradient-shift': "gradient-shift 3s ease infinite",
+        float: "float 3s ease-in-out infinite"
+      }
     }
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate")]
 } satisfies Config
 
 export default config

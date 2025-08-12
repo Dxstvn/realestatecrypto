@@ -17,7 +17,7 @@ import { ToastProvider } from "@/components/providers/toast-provider"
 import { AuthProvider } from "@/contexts/auth-context"
 import { NotificationProvider } from "@/contexts/notification-context"
 import { ErrorBoundary } from "@/components/error-boundary"
-import { Header } from "@/components/layouts/header"
+import { HeaderSimple, NAVBAR_HEIGHT } from "@/components/layouts/header-simple"
 import { FooterModern } from "@/components/layouts/footer-modern"
 import { WebVitalsReporter } from "./web-vitals"
 
@@ -174,7 +174,9 @@ export default function RootLayout({
         <RootProvider>
           <WebVitalsReporter />
           <div className="min-h-screen flex flex-col">
-            <Header />
+            {/* HeaderSimple includes its own spacer to prevent content overlap */}
+            <HeaderSimple />
+            {/* Main content - no padding needed as header includes spacer */}
             <main className="flex-1">
               {children}
             </main>
